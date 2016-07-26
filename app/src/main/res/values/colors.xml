@@ -3,4 +3,13 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="color_Priorities_Immediate">#B71C1C</color>
+    <color name="color_Priorities_High">#FFCDD2</color>
+    <color name="color_Priorities_Normal">#FFEBEE</color>
+    <color name="color_Priorities_Low">#FFFFFF</color>
+    <color name="color_Status_New">#FFFFFF</color>
+    <color name="color_Status_Inprogress">#64DD17</color>
+    <color name="color_Status_Resolved">#00BFA5</color>
+    <color name="color_Status_Closed">#424242</color>
+    <color name="color_date">#4276d9</color>
 </resources>

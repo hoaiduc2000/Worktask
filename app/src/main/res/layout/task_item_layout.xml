@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="@dimen/_16dp">
+
+    <TextView
+        android:id="@+id/text_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLength="30"
+        android:text="@string/title"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_title"
+        android:text="@string/startdate"
+        android:textColor="@color/color_date" />
+
+    <TextView
+        android:id="@+id/text_due_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_title"
+        android:layout_toRightOf="@+id/text_start_date"
+        android:text="@string/duedate"
+        android:textColor="@color/color_date" />
+
+    <FrameLayout
+        android:id="@+id/frame_priorities"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_60dp"
+        android:layout_alignParentRight="true"
+        android:background="@color/color_Priorities_Immediate" />
+
+    <FrameLayout
+        android:id="@+id/frame_status"
+        android:layout_width="20dp"
+        android:layout_height="60dp"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@+id/frame_priorities"
+        android:background="@color/color_Status_Inprogress" />
+
+    <ImageView
+        android:id="@+id/image_edit"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_20dp"
+        android:layout_marginRight="@dimen/_8dp"
+        android:layout_marginTop="@dimen/_40dp"
+        android:layout_toLeftOf="@+id/frame_status"
+        android:src="@drawable/btn_edit" />
+
+    <TextView
+        android:id="@+id/text_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/_8dp"
+        android:layout_toLeftOf="@id/image_edit"
+        android:text="@string/status"
+        android:textSize="@dimen/_10dp"
+        android:textStyle="italic" />
+
+
+</RelativeLayout>
