@@ -34,14 +34,14 @@
     <FrameLayout
         android:id="@+id/frame_priorities"
         android:layout_width="@dimen/_20dp"
-        android:layout_height="@dimen/_60dp"
+        android:layout_height="@dimen/_50dp"
         android:layout_alignParentRight="true"
         android:background="@color/color_Priorities_Immediate" />
 
     <FrameLayout
         android:id="@+id/frame_status"
-        android:layout_width="20dp"
-        android:layout_height="60dp"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_50dp"
         android:layout_marginRight="8dp"
         android:layout_toLeftOf="@+id/frame_priorities"
         android:background="@color/color_Status_Inprogress" />
@@ -51,7 +51,7 @@
         android:layout_width="@dimen/_20dp"
         android:layout_height="@dimen/_20dp"
         android:layout_marginRight="@dimen/_8dp"
-        android:layout_marginTop="@dimen/_40dp"
+        android:layout_marginTop="@dimen/_30dp"
         android:layout_toLeftOf="@+id/frame_status"
         android:src="@drawable/btn_edit" />
 
