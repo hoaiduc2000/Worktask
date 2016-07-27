@@ -23,8 +23,6 @@ public class TaskListAdapter extends ArrayAdapter<Task> {
     private int mLayoutId;
     private ArrayList<Task> mTaskItems;
 
-
-
     public TaskListAdapter(Activity context, int resource, ArrayList<Task> list) {
         super(context, resource, list);
         this.mContext = context;
