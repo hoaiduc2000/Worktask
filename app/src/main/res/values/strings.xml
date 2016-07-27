@@ -8,5 +8,22 @@
     <string name="status_impogress">Impogress</string>
     <string name="status_resolved">Resolved</string>
     <string name="status_closed">Closed</string>
+    <string name="writing_testplan">Writing Testplan</string>
+    <string name="title_add">Title</string>
+    <string name="startdate_add">Start Date</string>
+    <string name="duedate_add">Due Date</string>
+    <string name="description_add">Description</string>
+    <string name="estimate_add">Estimate Hours</string>
+    <string name="hours_add">Hours</string>
+    <string name="priority_add">Priority</string>
+    <string name="warning">There are more than 32 hours free from start date</string>
+
+    <string-array name="priority">
+        <item>Normal</item>
+        <item>Low</item>
+        <item>Normal</item>
+        <item>High</item>
+        <item>Immediate</item>
+    </string-array>
 
 </resources>
