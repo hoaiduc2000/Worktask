@@ -8,7 +8,9 @@ public class Task {
     private String title;
     private String priority;
     private String estimate;
+    private String starttime;
     private String startdate;
+    private String duetime;
     private String duedate;
     private String description;
     private String status;
@@ -59,6 +61,22 @@ public class Task {
 
     public String getDuedate() {
         return duedate;
+    }
+
+    public String getStarttime() {
+        return starttime;
+    }
+
+    public void setStarttime(String starttime) {
+        this.starttime = starttime;
+    }
+
+    public String getDuetime() {
+        return duetime;
+    }
+
+    public void setDuetime(String duetime) {
+        this.duetime = duetime;
     }
 
     public void setDuedate(String duedate) {

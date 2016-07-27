@@ -10,6 +10,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import adapter.TaskListAdapter;
+import data.DBAdapter;
 import model.Task;
 
 /**
@@ -21,6 +22,8 @@ public class MainActivity extends Activity {
     private TaskListAdapter mTaskListAdapter;
     private ArrayList<Task> mTaskArrayList;
     private ImageView mImageViewAdd;
+
+    private DBAdapter mDbAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,4 +49,9 @@ public class MainActivity extends Activity {
             }
         });
     }
+    public void initData(){
+        mDbAdapter = new DBAdapter(this);
+        mTaskArrayList = mDbAdapter.getAllTask();
+    }
+
 }
