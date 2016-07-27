@@ -6,6 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.example.nguyenhoaiduc.worktask.R;
 
 import java.util.ArrayList;
 
@@ -19,6 +22,8 @@ public class TaskListAdapter extends ArrayAdapter<Task> {
     private Activity mContext;
     private int mLayoutId;
     private ArrayList<Task> mTaskItems;
+
+
 
     public TaskListAdapter(Activity context, int resource, ArrayList<Task> list) {
         super(context, resource, list);
@@ -38,6 +43,15 @@ public class TaskListAdapter extends ArrayAdapter<Task> {
             LayoutInflater mInflater = (LayoutInflater) mContext.getLayoutInflater();
             convertView = mInflater.inflate(mLayoutId, null);
         }
+        final TextView mTextViewTitle = (TextView) convertView.findViewById(R.id.text_title);
+        final TextView mTextViewStartDate = (TextView) convertView.findViewById(R.id.text_start_date);
+        final TextView mTextViewDueDate = (TextView) convertView.findViewById(R.id.text_due_date);
+
+        mTextViewTitle.setText(mTaskItems.get(position).getTitle());
+        mTextViewStartDate.setText(mTaskItems.get(position).getStarttime()+" "+mTaskItems
+                .get(position).getStartdate()+"-");
+        mTextViewDueDate.setText(mTaskItems.get(position).getDuetime()+" "+mTaskItems
+                .get(position).getDuedate());
 
         return convertView;
     }
