@@ -25,20 +25,21 @@ public class MainActivity extends Activity {
 
     private DBAdapter mDbAdapter;
 
+    private String[] mStringStatus;
+    private String[] mStringPriority;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initData();
         initView();
     }
 
     public void initView() {
-        mTaskArrayList = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-            mTaskArrayList.add(new Task());
         mImageViewAdd = (ImageView) findViewById(R.id.image_view_add_task);
         mListTask = (ListView) findViewById(R.id.list_view_task);
-        mTaskListAdapter = new TaskListAdapter(this, R.layout.task_item_layout, mTaskArrayList);
+        mTaskListAdapter = new TaskListAdapter(this, R.layout.task_item_layout, mTaskArrayList, mStringPriority, mStringStatus);
         mListTask.setAdapter(mTaskListAdapter);
         mTaskListAdapter.notifyDataSetChanged();
         mImageViewAdd.setOnClickListener(new View.OnClickListener() {
@@ -49,9 +50,22 @@ public class MainActivity extends Activity {
             }
         });
     }
-    public void initData(){
+
+    public void initData() {
         mDbAdapter = new DBAdapter(this);
+        mDbAdapter.open();
         mTaskArrayList = mDbAdapter.getAllTask();
+        mStringPriority = getResources().getStringArray(R.array.priority);
+        mStringStatus = getResources().getStringArray(R.array.status);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        mDbAdapter.open();
+        mTaskArrayList.clear();
+        mTaskArrayList.addAll(mDbAdapter.getAllTask());
+        mTaskListAdapter.notifyDataSetChanged();
+
+    }
 }

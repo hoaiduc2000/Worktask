@@ -26,4 +26,11 @@
         <item>Immediate</item>
     </string-array>
 
+    <string-array name="status">
+        <item>New</item>
+        <item>Inprogress</item>
+        <item>Resolved</item>
+        <item>Closed</item>
+    </string-array>
+
 </resources>

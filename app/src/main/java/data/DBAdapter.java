@@ -43,7 +43,6 @@ public class DBAdapter {
     private SQLiteDatabase mDb;
     private DBOpenHelper mDbOpenHelper;
     final Context mContext;
-    private Cursor mCursor;
 
     public DBAdapter(Context ctx) {
         this.mContext = ctx;
@@ -110,7 +109,17 @@ public class DBAdapter {
 
         if (mCursor.moveToFirst()) {
             do {
-                Task mTask = cursorToObject();
+                Task mTask = new Task();
+                mTask.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
+                mTask.setTitle(mCursor.getString(mCursor.getColumnIndex("title")));
+                mTask.setDescription(mCursor.getString(mCursor.getColumnIndex("description")));
+                mTask.setPriority(mCursor.getString(mCursor.getColumnIndex("priority")));
+                mTask.setEstimate(mCursor.getString(mCursor.getColumnIndex("estimate")));
+                mTask.setStatus(mCursor.getString(mCursor.getColumnIndex("status")));
+                mTask.setStarttime(mCursor.getString(mCursor.getColumnIndex("starttime")));
+                mTask.setStartdate(mCursor.getString(mCursor.getColumnIndex("startdate")));
+                mTask.setDuetime(mCursor.getString(mCursor.getColumnIndex("duetime")));
+                mTask.setDuedate(mCursor.getString(mCursor.getColumnIndex("duedate")));
 
                 mListTask.add(mTask);
 
@@ -121,7 +130,7 @@ public class DBAdapter {
     }
 
     public Task getTask(int rowId) {
-        mCursor = mDb.query(true, DB_TABLE, new String[]{KEY_ID,
+        Cursor mCursor = mDb.query(true, DB_TABLE, new String[]{KEY_ID,
                         KEY_TITLE,
                         KEY_DESCRIPTION,
                         KEY_PRIORITY,
@@ -135,11 +144,6 @@ public class DBAdapter {
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
-        Task mTask = cursorToObject();
-        return mTask;
-    }
-
-    public Task cursorToObject() {
         Task mTask = new Task();
         mTask.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
         mTask.setTitle(mCursor.getString(mCursor.getColumnIndex("title")));
