@@ -172,4 +172,10 @@ public class DBAdapter {
 
         return mDb.update(DB_TABLE, args, KEY_ID + "=" + rowId, null) > 0;
     }
+
+    public boolean updateStatus(int rowId, String status) {
+        ContentValues args = new ContentValues();
+        args.put(KEY_STATUS, status);
+        return mDb.update(DB_TABLE, args, KEY_ID + "=" + rowId, null) > 0;
+    }
 }
