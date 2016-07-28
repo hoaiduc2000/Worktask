@@ -10,8 +10,12 @@
         android:id="@+id/text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:maxLength="30"
-        android:text="@string/title"
+        android:layout_toLeftOf="@+id/text_priority"
+        android:layout_alignParentLeft="true"
+        android:maxLines="1"
+        android:paddingRight="@dimen/_10dp"
+        android:ellipsize="end"
+        android:text="@string/writing_testplan"
         android:textStyle="bold" />
 
     <TextView
@@ -61,6 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginRight="@dimen/_8dp"
         android:layout_toLeftOf="@id/image_edit"
+        android:paddingLeft="@dimen/_10dp"
         android:text="@string/status"
         android:textSize="@dimen/_10dp"
         android:textStyle="italic" />
