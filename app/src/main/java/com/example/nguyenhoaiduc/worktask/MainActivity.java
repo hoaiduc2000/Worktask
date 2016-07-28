@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -28,6 +30,11 @@ public class MainActivity extends Activity {
     private String[] mStringStatus;
     private String[] mStringPriority;
 
+    private CheckBox mCheckBoxNew;
+    private CheckBox mCheckBoxImpogress;
+    private CheckBox mCheckBoxResolved;
+    private CheckBox mCheckBoxClosed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +44,12 @@ public class MainActivity extends Activity {
     }
 
     public void initView() {
+
+        mCheckBoxNew = (CheckBox) findViewById(R.id.checkbox_new);
+        mCheckBoxImpogress = (CheckBox) findViewById(R.id.checkbox_improgress);
+        mCheckBoxResolved = (CheckBox) findViewById(R.id.checkbox_resolved);
+        mCheckBoxClosed = (CheckBox) findViewById(R.id.checkbox_close);
+
         mImageViewAdd = (ImageView) findViewById(R.id.image_view_add_task);
         mListTask = (ListView) findViewById(R.id.list_view_task);
         mTaskListAdapter = new TaskListAdapter(this, R.layout.task_item_layout, mTaskArrayList, mStringPriority, mStringStatus);
@@ -47,6 +60,36 @@ public class MainActivity extends Activity {
             public void onClick(View v) {
                 Intent mIntent = new Intent(getApplication(), AddTaskActivity.class);
                 startActivity(mIntent);
+            }
+        });
+    }
+
+    public void setCheckFilter() {
+        mCheckBoxNew.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+            }
+        });
+
+        mCheckBoxImpogress.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+            }
+        });
+
+        mCheckBoxResolved.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+            }
+        });
+
+        mCheckBoxClosed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
             }
         });
     }

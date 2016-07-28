@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">Worktask</string>
     <string name="title">Write meeting minutes</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="set_status">Set Status</string>
+    <string name="set_status_date">Set Date</string>
+    <string name="set_status_time">Set Time</string>
     <string name="startdate">8:30 27/07/2016 - </string>
     <string name="duedate">10:00 27/07/2016</string>
     <string name="status">Normal</string>

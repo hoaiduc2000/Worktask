@@ -25,6 +25,7 @@
                 android:text="@string/status_new" />
 
             <CheckBox
+                android:id="@+id/checkbox_new"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -42,6 +43,7 @@
                 android:text="@string/status_impogress" />
 
             <CheckBox
+                android:id="@+id/checkbox_improgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -59,6 +61,7 @@
                 android:text="@string/status_resolved" />
 
             <CheckBox
+                android:id="@+id/checkbox_resolved"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -76,6 +79,7 @@
                 android:text="@string/status_closed" />
 
             <CheckBox
+                android:id="@+id/checkbox_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>

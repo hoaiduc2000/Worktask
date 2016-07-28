@@ -118,7 +118,7 @@ public class AddTaskActivity extends Activity implements View.OnClickListener {
                 mEditText.setText(selectedHour + ":" + selectedMinute);
             }
         }, hour, minute, true);
-        mTimePicker.setTitle("Select Time");
+        mTimePicker.setTitle(getResources().getString(R.string.set_status_time));
         mTimePicker.show();
 
     }
@@ -135,7 +135,7 @@ public class AddTaskActivity extends Activity implements View.OnClickListener {
                 mEditText.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
             }
         }, year, month, day);
-        mDatePicker.setTitle("Select Date");
+        mDatePicker.setTitle(getResources().getString(R.string.set_status_date));
         mDatePicker.show();
     }
 
@@ -148,6 +148,7 @@ public class AddTaskActivity extends Activity implements View.OnClickListener {
         mTask.setDescription(mEditTextDescription.getText().toString());
         mTask.setPriority(mSpinnerPriority.getSelectedItem().toString());
         mTask.setEstimate(mEditTextEstimate.getText().toString());
+        mTask.setStatus(getResources().getString(R.string.status_new));
         mTask.setStarttime(mEditTextTimeStart.getText().toString());
         mTask.setStartdate(mEditTextDateStart.getText().toString());
         mTask.setDuetime(mEditTextTimeDue.getText().toString());
