@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import model.Task;
 
@@ -109,18 +110,7 @@ public class DBAdapter {
 
         if (mCursor.moveToFirst()) {
             do {
-                Task mTask = new Task();
-                mTask.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
-                mTask.setTitle(mCursor.getString(mCursor.getColumnIndex("title")));
-                mTask.setDescription(mCursor.getString(mCursor.getColumnIndex("description")));
-                mTask.setPriority(mCursor.getString(mCursor.getColumnIndex("priority")));
-                mTask.setEstimate(mCursor.getString(mCursor.getColumnIndex("estimate")));
-                mTask.setStatus(mCursor.getString(mCursor.getColumnIndex("status")));
-                mTask.setStarttime(mCursor.getString(mCursor.getColumnIndex("starttime")));
-                mTask.setStartdate(mCursor.getString(mCursor.getColumnIndex("startdate")));
-                mTask.setDuetime(mCursor.getString(mCursor.getColumnIndex("duetime")));
-                mTask.setDuedate(mCursor.getString(mCursor.getColumnIndex("duedate")));
-
+                Task mTask = cursorToObject(mCursor);
                 mListTask.add(mTask);
 
             } while (mCursor.moveToNext());
@@ -144,6 +134,37 @@ public class DBAdapter {
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
+        Task mTask = cursorToObject(mCursor);
+        return mTask;
+    }
+
+    public ArrayList<Task> filterTask(List<String> status) {
+        ArrayList<Task> mListTask = new ArrayList<>();
+        for (int i = 0; i < status.size(); i++) {
+            Cursor mCursor = mDb.query(true, DB_TABLE, new String[]{KEY_ID,
+                            KEY_TITLE,
+                            KEY_DESCRIPTION,
+                            KEY_PRIORITY,
+                            KEY_ESTIMATE,
+                            KEY_STATUS,
+                            KEY_STARTTIME,
+                            KEY_STARTDATE,
+                            KEY_DUETIME,
+                            KEY_DUEDATE}, KEY_STATUS + "= '" + status.get(i) + "'", null, null,
+                    null, null, null);
+            if (mCursor.moveToFirst()) {
+                do {
+                    Task mTask = cursorToObject(mCursor);
+                    mListTask.add(mTask);
+
+                } while (mCursor.moveToNext());
+            }
+        }
+        mDb.close();
+        return mListTask;
+    }
+
+    public Task cursorToObject(Cursor mCursor) {
         Task mTask = new Task();
         mTask.setId(mCursor.getInt(mCursor.getColumnIndex("id")));
         mTask.setTitle(mCursor.getString(mCursor.getColumnIndex("title")));
