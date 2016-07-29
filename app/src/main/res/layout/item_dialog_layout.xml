@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:padding="@dimen/_8dp">
+    <TextView
+        android:id="@+id/text_view_item_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/image_view_forward"
+        android:layout_alignBottom="@+id/image_view_forward"
+        android:gravity="center_vertical"
+        android:text="@string/status_add"/>
+    <ImageView
+        android:id="@+id/image_view_forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="@dimen/_16dp"
+        android:layout_marginBottom="@dimen/_4dp"
+        android:layout_toRightOf="@+id/text_view_item_dialog"
+        android:src="@drawable/ic_forward_black"/>
+
+    <TextView
+        android:id="@+id/text_view_item_dialog_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:layout_marginLeft="@dimen/_16dp"
+        android:layout_alignTop="@+id/image_view_forward"
+        android:layout_alignBottom="@+id/image_view_forward"
+        android:gravity="center_vertical"
+        android:layout_toRightOf="@+id/image_view_forward"
+        android:text="@string/status_impogress"/>
+
+    <FrameLayout
+        android:id="@+id/frame_status"
+        android:layout_width="@dimen/_20dp"
+        android:layout_height="@dimen/_20dp"
+        android:layout_marginRight="@dimen/_20dp"
+        android:background="@color/color_date"
+        android:layout_alignParentRight="true"
+        />
+
+</RelativeLayout>

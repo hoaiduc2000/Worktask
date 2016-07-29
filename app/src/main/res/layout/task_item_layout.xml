@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:padding="@dimen/_16dp">
@@ -16,6 +16,7 @@
         android:paddingRight="@dimen/_10dp"
         android:ellipsize="end"
         android:text="@string/writing_testplan"
+        android:textColor="@color/color_text"
         android:textStyle="bold" />
 
     <TextView
@@ -68,6 +69,7 @@
         android:paddingLeft="@dimen/_10dp"
         android:text="@string/status"
         android:textSize="@dimen/_10dp"
+        android:textColor="@color/color_text"
         android:textStyle="italic" />
 
 

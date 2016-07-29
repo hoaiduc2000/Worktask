@@ -1,9 +1,12 @@
 <resources>
-    <string name="app_name">Worktask</string>
+    <string name="app_name">Worktask 1.0</string>
     <string name="title">Write meeting minutes</string>
+    <string name="hint_title">Enter title</string>
+    <string name="hint_description">Enter descriptions</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="set_status">Set Status</string>
+    <string name="empty_title">Empty Title</string>
     <string name="set_status_date">Set Date</string>
     <string name="set_status_time">Set Time</string>
     <string name="startdate">8:30 27/07/2016 - </string>
@@ -21,12 +24,28 @@
     <string name="estimate_add">Estimate Hours</string>
     <string name="hours_add">Hours</string>
     <string name="priority_add">Priority</string>
+    <string name="status_add">Status</string>
+    <string name="add_task_success">Add task success!</string>
+    <string name="add_task_false">Add task false!</string>
+    <string name="edit_task">Edit task success!</string>
     <string name="warning">There are more than 32 hours free from start date</string>
+    <string name="mode">mode</string>
+    <string name="id">id</string>
+    <string name="delete">Delete task</string>
+    <string name="delete_confirm">Are you sure to delete this task?</string>
+
+
+    <string name="empty_title_validate">Title is empty !</string>
+    <string name="empty_start_time_validate">Start time is empty !</string>
+    <string name="empty_start_date_validate">Start date is empty !</string>
+    <string name="empty_due_time_validate">Due time is empty !</string>
+    <string name="empty_due_date_validate">Due date is empty !</string>
+    <string name="empty_field_validate">Empty fields !</string>
+    <string name="duplicated_task">Duplicated task !</string>
 
     <string-array name="priority">
         <item>Normal</item>
         <item>Low</item>
-        <item>Normal</item>
         <item>High</item>
         <item>Immediate</item>
     </string-array>
@@ -36,6 +55,26 @@
         <item>Inprogress</item>
         <item>Resolved</item>
         <item>Closed</item>
+    </string-array>
+
+    <string-array name="mode">
+        <item>Preview</item>
+        <item>Add</item>
+        <item>Edit</item>
+    </string-array>
+
+    <string-array name="header">
+        <item>Detail</item>
+        <item>Add new task</item>
+        <item>Edit task</item>
+    </string-array>
+
+    <string-array name="warning">
+        <item>There are more than 32 hours free from start date</item>
+        <item>There are </item>
+        <item> hours free from start date</item>
+        <item> minutes free from start date</item>
+        <item>There is no time free from start date</item>
     </string-array>
 
 </resources>

@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Task;
+import util.ConvertTime;
 
 /**
  * Created by nguyen.hoai.duc on 7/27/2016.
  */
-public class DBAdapter {
+public class Database {
     private static final String DB_NAME = "worktask";
     private static final String DB_TABLE = "task";
     private static final String KEY_ID = "id";
@@ -45,7 +46,7 @@ public class DBAdapter {
     private DBOpenHelper mDbOpenHelper;
     final Context mContext;
 
-    public DBAdapter(Context ctx) {
+    public Database(Context ctx) {
         this.mContext = ctx;
         mDbOpenHelper = new DBOpenHelper(mContext);
     }
@@ -68,7 +69,7 @@ public class DBAdapter {
         }
     }
 
-    public DBAdapter open() throws SQLException {
+    public Database open() throws SQLException {
         mDb = mDbOpenHelper.getWritableDatabase();
         return this;
     }
@@ -77,7 +78,7 @@ public class DBAdapter {
         mDbOpenHelper.close();
     }
 
-    public long addTask(Task mTask) {
+    public long addTask(Task mTask, String title) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_TITLE, mTask.getTitle());
         initialValues.put(KEY_DESCRIPTION, mTask.getDescription());
@@ -88,10 +89,16 @@ public class DBAdapter {
         initialValues.put(KEY_STARTDATE, mTask.getStartdate());
         initialValues.put(KEY_DUETIME, mTask.getDuetime());
         initialValues.put(KEY_DUEDATE, mTask.getDuedate());
-        return mDb.insert(DB_TABLE, null, initialValues);
+        boolean check = checkDuplicated(title);
+        if (mTask.getTitle().equals(""))
+            return 0;
+        else if (check)
+            return 1;
+        else
+            return mDb.insert(DB_TABLE, null, initialValues);
     }
 
-    public boolean deleteContact(long rowID) {
+    public boolean deleteTask(int rowID) {
         return mDb.delete(DB_TABLE, KEY_ID + "=" + rowID, null) > 0;
     }
 
@@ -116,6 +123,7 @@ public class DBAdapter {
             } while (mCursor.moveToNext());
         }
         mDb.close();
+        ConvertTime.sortDate(mListTask);
         return mListTask;
     }
 
@@ -161,6 +169,7 @@ public class DBAdapter {
             }
         }
         mDb.close();
+        ConvertTime.sortDate(mListTask);
         return mListTask;
     }
 
@@ -199,4 +208,23 @@ public class DBAdapter {
         args.put(KEY_STATUS, status);
         return mDb.update(DB_TABLE, args, KEY_ID + "=" + rowId, null) > 0;
     }
+
+    public boolean checkDuplicated(String title) {
+        Cursor mCursor = mDb.query(true, DB_TABLE, new String[]{KEY_ID,
+                        KEY_TITLE,
+                        KEY_DESCRIPTION,
+                        KEY_PRIORITY,
+                        KEY_ESTIMATE,
+                        KEY_STATUS,
+                        KEY_STARTTIME,
+                        KEY_STARTDATE,
+                        KEY_DUETIME,
+                        KEY_DUEDATE}, KEY_TITLE + " like'%" + title + "%'", null, null,
+                null, null, null);
+        if (mCursor.moveToFirst())
+            return true;
+            return false;
+    }
+
+
 }

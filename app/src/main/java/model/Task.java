@@ -1,5 +1,9 @@
 package model;
 
+import java.util.Date;
+
+import util.ConvertTime;
+
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.
  */
@@ -14,9 +18,14 @@ public class Task {
     private String duedate;
     private String description;
     private String status;
+    private Date date;
 
     public Task() {
 
+    }
+
+    public Date getDate() {
+        return ConvertTime.timeToDate(getStarttime(), getStartdate());
     }
 
     public int getId() {

@@ -2,14 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:background="@color/color_background"
     android:orientation="vertical">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/status_filter"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_50dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
+        android:weightSum="1"
         android:paddingLeft="@dimen/_8dp">
 
         <LinearLayout
@@ -17,11 +20,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
+            android:layout_weight="0.25"
             android:layout_marginLeft="@dimen/_8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/color_text"
                 android:text="@string/status_new" />
 
             <CheckBox
@@ -35,11 +41,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/_8dp"
+            android:layout_weight="0.25"
             android:layout_toRightOf="@+id/layout_new">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/color_text"
                 android:text="@string/status_impogress" />
 
             <CheckBox
@@ -53,11 +62,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/_8dp"
+            android:layout_weight="0.25"
             android:layout_toLeftOf="@+id/layout_closed">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/color_text"
                 android:text="@string/status_resolved" />
 
             <CheckBox
@@ -71,11 +83,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
+            android:layout_weight="0.25"
             android:layout_marginRight="@dimen/_8dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/color_text"
                 android:text="@string/status_closed" />
 
             <CheckBox
@@ -84,7 +99,7 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
-    </RelativeLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/divider"
@@ -95,13 +110,11 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/list_view_task"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycle_view_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/status_filter">
-
-    </ListView>
+        android:layout_below="@+id/status_filter"/>
 
     <ImageView
         android:id="@+id/image_view_add_task"
@@ -112,6 +125,7 @@
         android:layout_marginBottom="@dimen/_16dp"
         android:layout_marginRight="@dimen/_16dp"
         android:clickable="true"
-        android:src="@drawable/btn_add_task" />
+        android:elevation="@dimen/_20dp"
+        android:background="@drawable/btn_add_task" />
 
 </RelativeLayout>
