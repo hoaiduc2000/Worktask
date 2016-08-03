@@ -1,4 +1,4 @@
-package com.example.nguyenhoaiduc.worktask;
+package vn.softfront.worktask;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
