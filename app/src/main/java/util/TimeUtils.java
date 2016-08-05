@@ -13,7 +13,7 @@ import model.Task;
 /**
  * Created by nguyen.hoai.duc on 7/28/2016.
  */
-public class ConvertTime {
+public class TimeUtils {
     public static final int SECOND = 1000;
     public static final int MINUTE = 60 * SECOND;
     public static final int HOUR = 60 * MINUTE;
@@ -41,30 +41,31 @@ public class ConvertTime {
         return mDate;
     }
 
-    public static int[] getFreeTime(long mTime) {
+    public static int[] getFreeTime(long startDate, long dueDate) {
         int hours;
         int minutes;
-        long mFreeTime = mTime - System.currentTimeMillis();
+        long mFreeTime = dueDate - startDate;
         hours = (int) mFreeTime / HOUR;
         minutes = (int) (mFreeTime % HOUR) / MINUTE;
         int[] values = new int[]{hours, minutes};
         return values;
     }
 
+
     public static String getEstimateTime(long start, long due) {
         long mEstimate = due - start;
         int hours = (int) mEstimate / HOUR;
         int minutes = (int) mEstimate / MINUTE;
-        if (hours <= Constrans.maxEstimateHour&& hours >= 1)
+        if (hours <= Constrans.maxFreeHour && hours >= 1)
             return hours + "";
         if (hours < 1 && minutes >= 30)
             return 0.5 + "";
-        if (hours > Constrans.maxEstimateHour)
-            return Constrans.maxEstimateHour + "";
+        if (hours > Constrans.maxFreeHour)
+            return Constrans.maxFreeHour + "";
         else return 0 + "";
     }
 
-    public static void sortDate(ArrayList<Task> mList){
+    public static void sortDate(ArrayList<Task> mList) {
         Collections.sort(mList, new Comparator<Task>() {
             @Override
             public int compare(Task lhs, Task rhs) {
@@ -73,11 +74,33 @@ public class ConvertTime {
         });
     }
 
-    public static String getCurrentTime(){
+    public static String getDueTime(long start, float estimate) {
+        long due = start + Long.valueOf(Math.round(estimate) * HOUR + "");
+        String time = new SimpleDateFormat("HH:mm").format(due);
+        return time;
+    }
+
+    public static String getDueDate(long start, float estimate) {
+        long due = start + Long.valueOf(Math.round(estimate) * HOUR + "");
+        String date = new SimpleDateFormat("dd/MM/yyyy").format(due);
+        return date;
+    }
+
+    public static String getCurrentTime() {
         return new SimpleDateFormat("HH:mm").format(Calendar.getInstance().getTime());
     }
 
-    public static String getCurrentDate(){
+    public static String getCurrentDate() {
         return new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+    }
+
+    public static long startTime(){
+
+        return 0;
+    }
+
+    public static long endTime(){
+
+        return 0;
     }
 }

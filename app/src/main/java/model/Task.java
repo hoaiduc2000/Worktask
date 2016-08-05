@@ -2,7 +2,7 @@ package model;
 
 import java.util.Date;
 
-import util.ConvertTime;
+import util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.
@@ -25,7 +25,7 @@ public class Task {
     }
 
     public Date getDate() {
-        return ConvertTime.timeToDate(getStarttime(), getStartdate());
+        return TimeUtils.timeToDate(getStarttime(), getStartdate());
     }
 
     public int getId() {

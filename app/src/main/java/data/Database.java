@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Task;
-import util.ConvertTime;
+import util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/27/2016.
@@ -90,9 +90,7 @@ public class Database {
         initialValues.put(KEY_DUETIME, mTask.getDuetime());
         initialValues.put(KEY_DUEDATE, mTask.getDuedate());
         boolean check = checkDuplicated(title);
-        if (mTask.getTitle().equals(""))
-            return 0;
-        else if (check)
+        if (check)
             return -1;
         else
             return mDb.insert(DB_TABLE, null, initialValues);
@@ -123,7 +121,7 @@ public class Database {
             } while (mCursor.moveToNext());
         }
         mDb.close();
-        ConvertTime.sortDate(mListTask);
+        TimeUtils.sortDate(mListTask);
         return mListTask;
     }
 
@@ -169,7 +167,7 @@ public class Database {
             }
         }
         mDb.close();
-        ConvertTime.sortDate(mListTask);
+        TimeUtils.sortDate(mListTask);
         return mListTask;
     }
 
@@ -223,7 +221,7 @@ public class Database {
                 null, null, null);
         if (mCursor.moveToFirst())
             return true;
-            return false;
+        return false;
     }
 
 

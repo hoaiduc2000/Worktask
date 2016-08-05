@@ -1,13 +1,10 @@
 package adapter;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,8 +15,7 @@ import java.util.ArrayList;
 
 import data.Database;
 import model.Task;
-import util.ConvertTime;
-import util.DialogUntil;
+import util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.
@@ -37,7 +33,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     private OnClickEditListener mOnClickEditListener;
 
     private Database mDatabase;
-    private ConvertTime mConvertTime;
+    private TimeUtils mTimeUtils;
 
     public TaskListAdapter(Activity context, ArrayList<Task> list, String[] mStringPriority, String[] mStringStatus) {
         this.mContext = context;
@@ -48,7 +44,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     }
 
     public void initData() {
-        mConvertTime = new ConvertTime();
+        mTimeUtils = new TimeUtils();
         mDatabase = new Database(mContext);
         mDatabase.open();
     }
@@ -56,10 +52,32 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     public void showDialog(final Task mTask) {
         if (mOnLongClickItemListener != null) {
             ArrayList<String> mListStatus = new ArrayList<>();
-            for(int i = 0;i<mStringStatus.length;i++)
-                if(!mTask.getStatus().equals(mStringStatus[i]))
-                    mListStatus.add(mStringStatus[i]);
-            mOnLongClickItemListener.onLongClickItem(mTask.getId(),mListStatus, mTask.getTitle());
+
+            if (mTask.getStatus().equals(mStringStatus[0])) {
+                for (int i = 0; i < mStringStatus.length; i++)
+                    if (!mTask.getStatus().equals(mStringStatus[i])
+                            && !mStringStatus[i].equals(mStringStatus[2]))
+                        mListStatus.add(mStringStatus[i]);
+            } else if (mTask.getStatus().equals(mStringStatus[1])) {
+                for (int i = 0; i < mStringStatus.length; i++)
+                    if (!mTask.getStatus().equals(mStringStatus[i])
+                            && !mStringStatus[i].equals(mStringStatus[0])
+                            && !mStringStatus[i].equals(mStringStatus[3]))
+                        mListStatus.add(mStringStatus[i]);
+            } else if (mTask.getStatus().equals(mStringStatus[2])) {
+                for (int i = 0; i < mStringStatus.length; i++)
+                    if (!mTask.getStatus().equals(mStringStatus[i])
+                            && !mStringStatus[i].equals(mStringStatus[0])
+                            && !mStringStatus[i].equals(mStringStatus[1]))
+                        mListStatus.add(mStringStatus[i]);
+            } else if (mTask.getStatus().equals(mStringStatus[3])) {
+                for (int i = 0; i < mStringStatus.length; i++)
+                    if (!mTask.getStatus().equals(mStringStatus[i])
+                            && !mStringStatus[i].equals(mStringStatus[1])
+                            && !mStringStatus[i].equals(mStringStatus[2]))
+                        mListStatus.add(mStringStatus[i]);
+            }
+            mOnLongClickItemListener.onLongClickItem(mTask.getId(), mListStatus, mTask.getTitle());
         }
     }
 
@@ -185,7 +203,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     }
 
     public void checkOverDeadline(Task mTask, TextView mTextView) {
-        int[] mTime = mConvertTime.getFreeTime(mConvertTime.timeToMilisecond(mTask.getDuetime()
+        int[] mTime = mTimeUtils.getFreeTime(System.currentTimeMillis(),mTimeUtils.timeToMilisecond(mTask.getDuetime()
                 , mTask.getDuedate()));
         if (mTime[0] < 1 && mTime[1] < 0)
             mTextView.setTextColor(mContext.getResources().getColor(R.color.color_Priorities_Immediate));

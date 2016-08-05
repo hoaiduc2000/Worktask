@@ -38,6 +38,8 @@
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/image_view_back"
                     android:text="@string/writing_testplan"
+                    android:maxLines="1"
+                    android:ellipsize="start"
                     android:textSize="@dimen/_20sp"
                     android:textColor="@color/color_text"
                     android:textStyle="bold" />
@@ -48,8 +50,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.02"
-                android:text="Done"
+                android:text="@string/done"
+                android:textSize="@dimen/_20sp"
                 android:textStyle="bold"
+                android:paddingLeft="@dimen/_10dp"
+                android:textColor="@color/color_text"
                 android:visibility="gone" />
         </LinearLayout>
 
@@ -58,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_0.25dp"
             android:layout_below="@+id/layout_add_header"
-            android:background="@color/color_Status_Closed"></RelativeLayout>
+            android:background="@color/color_Status_Closed"/>
 
         <LinearLayout
             android:id="@+id/layout_title"
@@ -77,6 +82,7 @@
                 android:layout_weight="0.1"
                 android:text="@string/title_add"
                 android:textColor="@color/color_text"
+                android:textSize="@dimen/_15sp"
                 android:textStyle="italic" />
 
             <EditText
@@ -101,12 +107,13 @@
             android:layout_marginTop="@dimen/_16dp"
             android:text="@string/description_add"
             android:textColor="@color/color_text"
+            android:textSize="@dimen/_15sp"
             android:textStyle="italic" />
 
         <EditText
             android:id="@+id/edit_text_description"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_100dp"
+            android:layout_height="@dimen/_150dp"
             android:layout_below="@+id/text_view_description"
             android:layout_marginLeft="@dimen/_8dp"
             android:layout_marginRight="@dimen/_8dp"
@@ -116,47 +123,61 @@
             android:hint="@string/hint_description"
             android:padding="@dimen/_8dp" />
 
+        <FrameLayout
+            android:id="@+id/frame_priority"
+            android:layout_below="@+id/edit_text_description"
+            android:layout_width="@dimen/_115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_8dp"
+            android:layout_marginTop="@dimen/_16dp">
         <TextView
             android:id="@+id/text_view_priority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/edit_text_description"
-            android:layout_marginLeft="@dimen/_8dp"
-            android:layout_marginTop="@dimen/_16dp"
             android:text="@string/priority_add"
             android:textColor="@color/color_text"
+            android:textSize="@dimen/_15sp"
             android:textStyle="italic" />
+        </FrameLayout>
 
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_text_description"
+            android:layout_toRightOf="@+id/frame_priority"
+            android:background="@drawable/edt_box_title"
+            android:layout_marginTop="@dimen/_16dp">
         <Spinner
             android:id="@+id/spinner_priority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/edit_text_description"
-            android:layout_marginLeft="@dimen/_68dp"
-            android:layout_marginTop="@dimen/_16dp"
-            android:layout_toRightOf="@+id/text_view_priority"
-            android:background="@drawable/edt_box_title"
             android:entries="@array/priority"></Spinner>
+        </RelativeLayout>
 
+        <FrameLayout
+            android:id="@+id/frame_start_date"
+            android:layout_width="@dimen/_115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_8dp"
+            android:layout_marginTop="@dimen/_25dp"
+            android:layout_below="@+id/frame_priority">
         <TextView
             android:id="@+id/text_view_startdate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_priority"
-            android:layout_marginLeft="@dimen/_8dp"
-            android:layout_marginTop="@dimen/_25dp"
             android:text="@string/startdate_add"
             android:textColor="@color/color_text"
+            android:textSize="@dimen/_15sp"
             android:textStyle="italic" />
+        </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/layout_start_time"
             android:layout_width="@dimen/_72dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_priority"
-            android:layout_marginLeft="@dimen/_50dp"
+            android:layout_below="@+id/frame_priority"
             android:layout_marginTop="@dimen/_20dp"
-            android:layout_toRightOf="@+id/text_view_startdate">
+            android:layout_toRightOf="@+id/frame_start_date">
 
             <EditText
                 android:id="@+id/edit_text_start_time"
@@ -177,10 +198,10 @@
 
         <RelativeLayout
             android:id="@+id/layout_start_date"
-            android:layout_width="@dimen/_130dp"
+            android:layout_width="@dimen/_120dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_priority"
-            android:layout_marginLeft="@dimen/_40dp"
+            android:layout_below="@+id/frame_priority"
+            android:layout_marginLeft="@dimen/_20dp"
             android:layout_marginTop="@dimen/_20dp"
             android:layout_toRightOf="@+id/layout_start_time">
 
@@ -201,25 +222,30 @@
                 android:background="@drawable/ic_arrow_drop_down" />
         </RelativeLayout>
 
+        <FrameLayout
+            android:id="@+id/frame_due_date"
+            android:layout_width="@dimen/_115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_8dp"
+            android:layout_marginTop="@dimen/_25dp"
+            android:layout_below="@+id/frame_start_date">
         <TextView
             android:id="@+id/text_view_duedate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_startdate"
-            android:layout_marginLeft="@dimen/_8dp"
-            android:layout_marginTop="@dimen/_25dp"
             android:text="@string/duedate_add"
             android:textColor="@color/color_text"
+            android:textSize="@dimen/_15sp"
             android:textStyle="italic" />
+        </FrameLayout>
 
         <RelativeLayout
             android:id="@+id/layout_due_time"
             android:layout_width="@dimen/_72dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_startdate"
-            android:layout_marginLeft="@dimen/_56dp"
+            android:layout_below="@+id/frame_start_date"
             android:layout_marginTop="@dimen/_20dp"
-            android:layout_toRightOf="@+id/text_view_duedate">
+            android:layout_toRightOf="@+id/frame_due_date">
 
             <EditText
                 android:id="@+id/edit_text_due_time"
@@ -240,10 +266,10 @@
 
         <RelativeLayout
             android:id="@+id/layout_due_date"
-            android:layout_width="@dimen/_130dp"
+            android:layout_width="@dimen/_120dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_startdate"
-            android:layout_marginLeft="@dimen/_40dp"
+            android:layout_below="@+id/frame_start_date"
+            android:layout_marginLeft="@dimen/_20dp"
             android:layout_marginTop="@dimen/_20dp"
             android:layout_toRightOf="@+id/layout_due_time">
 
@@ -264,25 +290,31 @@
                 android:background="@drawable/ic_arrow_drop_down" />
         </RelativeLayout>
 
+        <FrameLayout
+            android:id="@+id/frame_estimate"
+            android:layout_width="@dimen/_115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_8dp"
+            android:layout_marginTop="@dimen/_25dp"
+            android:layout_below="@+id/frame_due_date">
         <TextView
             android:id="@+id/text_view_estimate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_view_duedate"
-            android:layout_marginLeft="@dimen/_8dp"
-            android:layout_marginTop="@dimen/_25dp"
             android:text="@string/estimate_add"
             android:textColor="@color/color_text"
+            android:textSize="@dimen/_15sp"
             android:textStyle="italic" />
+        </FrameLayout>
 
         <EditText
             android:id="@+id/edit_text_estimate"
             android:layout_width="@dimen/_72dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_duedate"
-            android:layout_marginLeft="@dimen/_18dp"
+            android:layout_below="@+id/frame_due_date"
             android:layout_marginTop="@dimen/_20dp"
-            android:layout_toRightOf="@+id/text_view_estimate"
+            android:layout_toRightOf="@+id/frame_estimate"
             android:background="@drawable/edt_box_title"
             android:gravity="center"
             android:inputType="numberDecimal" />
@@ -291,11 +323,12 @@
             android:id="@+id/text_view_hours"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/text_view_duedate"
+            android:layout_below="@+id/frame_due_date"
             android:layout_marginLeft="@dimen/_8dp"
             android:layout_marginTop="@dimen/_25dp"
             android:textColor="@color/color_text"
             android:layout_toRightOf="@+id/edit_text_estimate"
+            android:textSize="@dimen/_15sp"
             android:text="@string/hours_add" />
 
         <LinearLayout
@@ -310,32 +343,40 @@
                 android:id="@+id/text_view_warning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/warning"
                 android:textStyle="italic" />
         </LinearLayout>
 
+        <FrameLayout
+            android:id="@+id/frame_status"
+            android:layout_width="@dimen/_115dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_30dp"
+            android:layout_marginLeft="@dimen/_8dp"
+            android:layout_below="@+id/layout_text_warning">
         <TextView
             android:id="@+id/text_view_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_30dp"
-            android:layout_marginLeft="@dimen/_8dp"
             android:layout_below="@+id/layout_text_warning"
             android:visibility="gone"
             android:textColor="@color/color_text"
             android:text="@string/status_add"/>
+        </FrameLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_text_warning"
+        android:layout_toRightOf="@+id/frame_status"
+        android:layout_marginTop="@dimen/_25dp"
+        android:background="@drawable/edt_box_title">
         <Spinner
             android:id="@+id/spinner_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_25dp"
-            android:layout_marginLeft="@dimen/_72dp"
-            android:layout_below="@+id/layout_text_warning"
-            android:layout_toRightOf="@+id/text_view_status"
-            android:background="@drawable/edt_box_title"
             android:visibility="gone"
             android:entries="@array/status"></Spinner>
+        </RelativeLayout>
 
 
     </RelativeLayout>

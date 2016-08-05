@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Worktask 1.0</string>
     <string name="title">Write meeting minutes</string>
+    <string name="done">Done</string>
     <string name="hint_title">Enter title</string>
     <string name="hint_description">Enter descriptions</string>
     <string name="ok">OK</string>
@@ -41,6 +42,7 @@
     <string name="empty_due_time_validate">Due time is empty !</string>
     <string name="empty_due_date_validate">Due date is empty !</string>
     <string name="empty_field_validate">Empty fields !</string>
+    <string name="empty_field_estimate">Estimate is empty !</string>
     <string name="duplicated_task">Duplicated task !</string>
 
     <string-array name="priority">

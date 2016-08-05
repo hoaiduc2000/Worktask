@@ -32,8 +32,11 @@
     <dimen name="_80dp">80dp</dimen>
     <dimen name="_90dp">90dp</dimen>
     <dimen name="_100dp">100dp</dimen>
+    <dimen name="_115dp">115dp</dimen>
     <dimen name="_120dp">120dp</dimen>
     <dimen name="_130dp">130dp</dimen>
+    <dimen name="_140dp">140dp</dimen>
+    <dimen name="_150dp">150dp</dimen>
     <dimen name="_180dp">180dp</dimen>
     <dimen name="_200dp">200dp</dimen>
     <dimen name="_250dp">250dp</dimen>
@@ -41,6 +44,7 @@
 
     <!--TextSize-->
     <dimen name="_10sp">10sp</dimen>
+    <dimen name="_14sp">14sp</dimen>
     <dimen name="_15sp">15sp</dimen>
     <dimen name="_16sp">16sp</dimen>
     <dimen name="_18sp">18sp</dimen>

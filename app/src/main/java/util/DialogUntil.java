@@ -87,7 +87,9 @@ public class DialogUntil {
         alert.show();
     }
 
-    public static void showDialog(Activity mContext, int idLayout, String title, int idTextViewCancel, int idTextViewDelete, final IEvenCancel evenCancel, final IEvenDeleteDialog evenDelete, StatusDialogAdapter mStatusDialogAdapter) {
+    public static void showDialog(Activity mContext, int idLayout, String title, int idTextViewCancel,
+                                  int idTextViewDelete, final IEvenCancel evenCancel,
+                                  final IEvenDeleteDialog evenDelete, StatusDialogAdapter mStatusDialogAdapter) {
         final Dialog mDialog = new Dialog(mContext);
         mDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

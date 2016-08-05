@@ -7,7 +7,9 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Slide;
 import android.view.View;
+import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -21,7 +23,7 @@ import adapter.TaskListAdapter;
 import data.Database;
 import model.Task;
 import util.Constrans;
-import util.ConvertTime;
+import util.TimeUtils;
 import util.DialogUntil;
 import util.Divider;
 
@@ -187,7 +189,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mImageViewAdd = (ImageView) findViewById(R.id.image_view_add_task);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycle_view_task);
         mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new Divider(this));
@@ -270,16 +272,16 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         for (int i = 0; i < mTaskArrayList.size(); i++)
             if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[0])) {
                 mListNormal.add(mTaskArrayList.get(i));
-                ConvertTime.sortDate(mListNormal);
+                TimeUtils.sortDate(mListNormal);
             } else if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[1])) {
                 mListLow.add(mTaskArrayList.get(i));
-                ConvertTime.sortDate(mListLow);
+                TimeUtils.sortDate(mListLow);
             } else if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[2])) {
                 mListHigh.add(mTaskArrayList.get(i));
-                ConvertTime.sortDate(mListHigh);
+                TimeUtils.sortDate(mListHigh);
             } else if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[3])) {
                 mListImmediate.add(mTaskArrayList.get(i));
-                ConvertTime.sortDate(mListImmediate);
+                TimeUtils.sortDate(mListImmediate);
             }
         mTaskArrayList.clear();
         mTaskArrayList.addAll(mListImmediate);
