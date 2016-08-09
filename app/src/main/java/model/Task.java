@@ -1,7 +1,6 @@
 package model;
 
 import java.util.Date;
-
 import util.TimeUtils;
 
 /**
@@ -26,6 +25,7 @@ public class Task {
 
     public Date getDate() {
         return TimeUtils.timeToDate(getStarttime(), getStartdate());
+
     }
 
     public int getId() {

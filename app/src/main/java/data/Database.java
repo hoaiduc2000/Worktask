@@ -92,6 +92,7 @@ public class Database {
         boolean check = checkDuplicated(title);
         if (check)
             return -1;
+
         else
             return mDb.insert(DB_TABLE, null, initialValues);
     }
@@ -167,7 +168,9 @@ public class Database {
             }
         }
         mDb.close();
+
         TimeUtils.sortDate(mListTask);
+
         return mListTask;
     }
 
@@ -222,6 +225,7 @@ public class Database {
         if (mCursor.moveToFirst())
             return true;
         return false;
+
     }
 
 

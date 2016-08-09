@@ -122,7 +122,6 @@
             android:gravity="start"
             android:hint="@string/hint_description"
             android:padding="@dimen/_8dp" />
-
         <FrameLayout
             android:id="@+id/frame_priority"
             android:layout_below="@+id/edit_text_description"
@@ -381,6 +380,7 @@
             android:visibility="gone"
             android:entries="@array/status"></Spinner>
         </RelativeLayout>
+
 
 
     </RelativeLayout>

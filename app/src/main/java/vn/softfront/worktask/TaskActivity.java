@@ -48,7 +48,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     private Database mDatabase;
     private TimeUtils mTimeUtils;
-
     private String[] mStringMode;
     private String[] mStringPriority;
     private String[] mStringStatus;
@@ -57,7 +56,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     private String mMode;
     private int mId;
     private boolean flag;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +106,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
             }
         });
-
 
     }
 

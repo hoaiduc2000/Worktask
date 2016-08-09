@@ -45,6 +45,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     public void initData() {
         mTimeUtils = new TimeUtils();
+
         mDatabase = new Database(mContext);
         mDatabase.open();
     }
@@ -78,6 +79,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                         mListStatus.add(mStringStatus[i]);
             }
             mOnLongClickItemListener.onLongClickItem(mTask.getId(), mListStatus, mTask.getTitle());
+
         }
     }
 
@@ -204,6 +206,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     public void checkOverDeadline(Task mTask, TextView mTextView) {
         int[] mTime = mTimeUtils.getFreeTime(System.currentTimeMillis(),mTimeUtils.timeToMilisecond(mTask.getDuetime()
+
                 , mTask.getDuedate()));
         if (mTime[0] < 1 && mTime[1] < 0)
             mTextView.setTextColor(mContext.getResources().getColor(R.color.color_Priorities_Immediate));

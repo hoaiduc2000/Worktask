@@ -87,6 +87,7 @@ public class DialogUntil {
         alert.show();
     }
 
+
     public static void showDialog(Activity mContext, int idLayout, String title, int idTextViewCancel,
                                   int idTextViewDelete, final IEvenCancel evenCancel,
                                   final IEvenDeleteDialog evenDelete, StatusDialogAdapter mStatusDialogAdapter) {
