@@ -69,12 +69,11 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     @Override
     protected void onRestart() {
         super.onRestart();
-        setUnChecked();
         mDatabase.open();
-        mTaskArrayList.clear();
-        mTaskArrayListTemp.clear();
-        mTaskArrayList.addAll(mDatabase.getAllTask());
-        mTaskArrayListTemp.addAll(mTaskArrayList);
+        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
+        checkCB(mCheckBoxResolved.isChecked(), Constrans.cbResolved);
+        checkCB(mCheckBoxClosed.isChecked(), Constrans.cbClosed);
         sortTask();
         mTaskListAdapter.notifyDataSetChanged();
     }
@@ -146,8 +145,10 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mTaskArrayList.clear();
         mTaskArrayListTemp.clear();
         mDatabase.deleteTask(id);
-        mTaskArrayList.addAll(mDatabase.getAllTask());
-        mTaskArrayListTemp.addAll(mTaskArrayList);
+        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
+        checkCB(mCheckBoxResolved.isChecked(), Constrans.cbResolved);
+        checkCB(mCheckBoxClosed.isChecked(), Constrans.cbClosed);
         sortTask();
         mTaskListAdapter.notifyDataSetChanged();
         mDatabase.close();
@@ -158,14 +159,10 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void onItemClick(String status, Dialog mDialog) {
         mDatabase.open();
         mDatabase.updateStatus(mId, status);
-        mTaskArrayList.clear();
-        mTaskArrayListTemp.clear();
-        mTaskArrayList.addAll(mDatabase.getAllTask());
-        mTaskArrayListTemp.addAll(mTaskArrayList);
-        sortTask();
-        mTaskListAdapter.notifyDataSetChanged();
-        mDatabase.close();
-        setUnChecked();
+        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
+        checkCB(mCheckBoxResolved.isChecked(), Constrans.cbResolved);
+        checkCB(mCheckBoxClosed.isChecked(), Constrans.cbClosed);
         mDialog.dismiss();
     }
 
@@ -257,37 +254,12 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         if (!mCheckBoxNew.isChecked() && !mCheckBoxImpogress.isChecked() &&
                 !mCheckBoxResolved.isChecked() && !mCheckBoxClosed.isChecked()) {
             mTaskArrayList.clear();
-            mTaskArrayList.addAll(mTaskArrayListTemp);
-            sortTask();
             mTaskListAdapter.notifyDataSetChanged();
         }
     }
 
     public void sortTask() {
-        ArrayList<Task> mListImmediate = new ArrayList<>();
-        ArrayList<Task> mListHigh = new ArrayList<>();
-        ArrayList<Task> mListNormal = new ArrayList<>();
-        ArrayList<Task> mListLow = new ArrayList<>();
-
-        for (int i = 0; i < mTaskArrayList.size(); i++)
-            if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[0])) {
-                mListNormal.add(mTaskArrayList.get(i));
-                TimeUtils.sortDate(mListNormal);
-            } else if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[1])) {
-                mListLow.add(mTaskArrayList.get(i));
-                TimeUtils.sortDate(mListLow);
-            } else if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[2])) {
-                mListHigh.add(mTaskArrayList.get(i));
-                TimeUtils.sortDate(mListHigh);
-            } else if (mTaskArrayList.get(i).getPriority().equals(mStringPriority[3])) {
-                mListImmediate.add(mTaskArrayList.get(i));
-                TimeUtils.sortDate(mListImmediate);
-            }
-        mTaskArrayList.clear();
-        mTaskArrayList.addAll(mListImmediate);
-        mTaskArrayList.addAll(mListHigh);
-        mTaskArrayList.addAll(mListNormal);
-        mTaskArrayList.addAll(mListLow);
+        TimeUtils.sortDate(mTaskArrayList);
     }
 
     public void setUnChecked() {

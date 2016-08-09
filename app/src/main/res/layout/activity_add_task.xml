@@ -185,6 +185,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edt_box_title"
                 android:editable="false"
+                android:focusable="false"
                 android:paddingLeft="@dimen/_5dp" />
 
             <ImageView
@@ -211,6 +212,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edt_box_title"
                 android:editable="false"
+                android:focusable="false"
                 android:paddingLeft="@dimen/_5dp" />
 
             <ImageView
@@ -253,6 +255,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edt_box_title"
                 android:editable="false"
+                android:focusable="false"
                 android:paddingLeft="@dimen/_5dp" />
 
             <ImageView
@@ -279,6 +282,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/edt_box_title"
                 android:editable="false"
+                android:focusable="false"
                 android:paddingLeft="@dimen/_5dp" />
 
             <ImageView

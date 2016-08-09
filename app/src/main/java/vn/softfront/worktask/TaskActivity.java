@@ -29,10 +29,6 @@ import util.DialogUntil;
 public class TaskActivity extends Activity implements View.OnClickListener {
 
     private ImageView mImageViewBack;
-    private ImageView mImageViewTimeStart;
-    private ImageView mImageViewDateStart;
-    private ImageView mImageViewTimeDue;
-    private ImageView mImageViewDateDue;
 
     private EditText mEditTextTitle;
     private EditText mEditTextDescription;
@@ -74,16 +70,16 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.image_view_time_start_picker:
+            case R.id.edit_text_start_time:
                 showTimePicker(mEditTextTimeStart);
                 break;
-            case R.id.image_view_date_start_picker:
+            case R.id.edit_text_start_date:
                 showDatePicker(mEditTextDateStart);
                 break;
-            case R.id.image_view_time_due_picker:
+            case R.id.edit_text_due_time:
                 showTimePicker(mEditTextTimeDue);
                 break;
-            case R.id.image_view_date_due_picker:
+            case R.id.edit_text_due_date:
                 showDatePicker(mEditTextDateDue);
                 break;
             case R.id.image_view_back:
@@ -173,11 +169,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     public void initView() {
         mImageViewBack = (ImageView) findViewById(R.id.image_view_back);
-        mImageViewTimeStart = (ImageView) findViewById(R.id.image_view_time_start_picker);
-        mImageViewDateStart = (ImageView) findViewById(R.id.image_view_date_start_picker);
-        mImageViewTimeDue = (ImageView) findViewById(R.id.image_view_time_due_picker);
-        mImageViewDateDue = (ImageView) findViewById(R.id.image_view_date_due_picker);
-
         mEditTextTitle = (EditText) findViewById(R.id.edit_text_title);
         mEditTextDescription = (EditText) findViewById(R.id.edit_text_description);
         mEditTextTimeStart = (EditText) findViewById(R.id.edit_text_start_time);
@@ -196,10 +187,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
         mTextViewDone.setOnClickListener(this);
 
-        mImageViewTimeStart.setOnClickListener(this);
-        mImageViewDateStart.setOnClickListener(this);
-        mImageViewTimeDue.setOnClickListener(this);
-        mImageViewDateDue.setOnClickListener(this);
+        mEditTextTimeStart.setOnClickListener(this);
+        mEditTextDateStart.setOnClickListener(this);
+        mEditTextTimeDue.setOnClickListener(this);
+        mEditTextDateDue.setOnClickListener(this);
         mImageViewBack.setOnClickListener(this);
 
         if (mMode.equals(mStringMode[0])) {
