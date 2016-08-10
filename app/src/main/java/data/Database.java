@@ -92,7 +92,8 @@ public class Database {
         boolean check = checkDuplicated(title);
         if (check)
             return -1;
-
+        if (mTask.getDescription().length() > 250)
+            return -2;
         else
             return mDb.insert(DB_TABLE, null, initialValues);
     }
@@ -122,7 +123,7 @@ public class Database {
             } while (mCursor.moveToNext());
         }
         mDb.close();
-        TimeUtils.sortDate(mListTask);
+        TimeUtils.sortStartDate(mListTask);
         return mListTask;
     }
 
@@ -169,7 +170,7 @@ public class Database {
         }
         mDb.close();
 
-        TimeUtils.sortDate(mListTask);
+        TimeUtils.sortStartDate(mListTask);
 
         return mListTask;
     }

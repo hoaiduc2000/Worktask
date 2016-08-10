@@ -13,5 +13,6 @@
     <color name="color_Status_Closed">#424242</color>
     <color name="color_date">#4276d9</color>
     <color name="color_text">#000000</color>
+    <color name="color_done">#33B5E5</color>
     <color name="color_background">#ffffff</color>
 </resources>

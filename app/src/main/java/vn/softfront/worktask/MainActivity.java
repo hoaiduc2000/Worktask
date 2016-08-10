@@ -68,10 +68,10 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     protected void onRestart() {
         super.onRestart();
         mDatabase.open();
-        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
-        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
-        checkCB(mCheckBoxResolved.isChecked(), Constrans.cbResolved);
-        checkCB(mCheckBoxClosed.isChecked(), Constrans.cbClosed);
+        checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
+        checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
+        checkCB(mCheckBoxClosed.isChecked(), Constrans.CB_CLOSED);
         sortTask();
         mTaskListAdapter.notifyDataSetChanged();
     }
@@ -80,19 +80,19 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         switch (buttonView.getId()) {
             case R.id.checkbox_new:
-                checkCB(isChecked, Constrans.cbNew);
+                checkCB(isChecked, Constrans.CB_NEW);
                 break;
 
             case R.id.checkbox_improgress:
-                checkCB(isChecked, Constrans.cbImpogress);
+                checkCB(isChecked, Constrans.CB_IMPOGRESS);
                 break;
 
             case R.id.checkbox_resolved:
-                checkCB(isChecked, Constrans.cbResolved);
+                checkCB(isChecked, Constrans.CB_RESOLVED);
                 break;
 
             case R.id.checkbox_close:
-                checkCB(isChecked, Constrans.cbClosed);
+                checkCB(isChecked, Constrans.CB_CLOSED);
                 break;
             default:
         }
@@ -143,10 +143,10 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mTaskArrayList.clear();
         mTaskArrayListTemp.clear();
         mDatabase.deleteTask(id);
-        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
-        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
-        checkCB(mCheckBoxResolved.isChecked(), Constrans.cbResolved);
-        checkCB(mCheckBoxClosed.isChecked(), Constrans.cbClosed);
+        checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
+        checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
+        checkCB(mCheckBoxClosed.isChecked(), Constrans.CB_CLOSED);
         sortTask();
         mTaskListAdapter.notifyDataSetChanged();
         mDatabase.close();
@@ -157,10 +157,10 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void onItemClick(String status, Dialog mDialog) {
         mDatabase.open();
         mDatabase.updateStatus(mId, status);
-        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
-        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
-        checkCB(mCheckBoxResolved.isChecked(), Constrans.cbResolved);
-        checkCB(mCheckBoxClosed.isChecked(), Constrans.cbClosed);
+        checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
+        checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
+        checkCB(mCheckBoxClosed.isChecked(), Constrans.CB_CLOSED);
         mDialog.dismiss();
     }
 
@@ -257,7 +257,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     }
 
     public void sortTask() {
-        TimeUtils.sortDate(mTaskArrayList);
+        TimeUtils.sortStartDate(mTaskArrayList);
     }
 
     public void setUnChecked() {
@@ -278,8 +278,8 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void initCheckBox() {
         mCheckBoxNew.setChecked(true);
         mCheckBoxImpogress.setChecked(true);
-        checkCB(mCheckBoxNew.isChecked(), Constrans.cbNew);
-        checkCB(mCheckBoxImpogress.isChecked(), Constrans.cbImpogress);
+        checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
+        checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
     }
 
 }

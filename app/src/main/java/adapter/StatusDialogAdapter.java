@@ -33,7 +33,7 @@ public class StatusDialogAdapter extends ArrayAdapter<String> {
         mStringStatus = mContext.getResources().getStringArray(R.array.status);
     }
 
-    public void setDialog(Dialog mDialog){
+    public void setDialog(Dialog mDialog) {
         this.mDialog = mDialog;
     }
 
@@ -49,7 +49,7 @@ public class StatusDialogAdapter extends ArrayAdapter<String> {
         }
         final TextView mTextViewStatus = (TextView) convertView.findViewById(R.id.text_view_item_dialog_status);
         final FrameLayout mFrameLayout = (FrameLayout) convertView.findViewById(R.id.frame_status);
-        mTextViewStatus.setText(mListStatus.get(position));
+        mTextViewStatus.setText(mListStatus.get(position) + " ");
 
         if (mListStatus.get(position).equals(mStringStatus[0]))
             mFrameLayout.setBackgroundColor(mContext.getResources()
@@ -68,7 +68,7 @@ public class StatusDialogAdapter extends ArrayAdapter<String> {
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mOnDialogItemClickListener.onItemClick(mListStatus.get(position),mDialog);
+                mOnDialogItemClickListener.onItemClick(mListStatus.get(position), mDialog);
             }
         });
 
@@ -81,6 +81,6 @@ public class StatusDialogAdapter extends ArrayAdapter<String> {
     }
 
     public interface OnDialogItemClickListener {
-        void onItemClick(String status,Dialog mDialog);
+        void onItemClick(String status, Dialog mDialog);
     }
 }
