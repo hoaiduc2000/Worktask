@@ -15,4 +15,5 @@
     <color name="color_text">#000000</color>
     <color name="color_done">#33B5E5</color>
     <color name="color_background">#ffffff</color>
+    <color name="color_list_item">#cfd8dc</color>
 </resources>

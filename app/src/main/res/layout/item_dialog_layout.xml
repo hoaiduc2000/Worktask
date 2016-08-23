@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
+    android:background="@drawable/list_item_hover"
     android:padding="@dimen/_8dp">
     <TextView
         android:id="@+id/text_view_item_dialog"
@@ -39,6 +40,7 @@
         android:layout_width="@dimen/_20dp"
         android:layout_height="@dimen/_20dp"
         android:layout_marginRight="@dimen/_20dp"
+        android:layout_marginTop="@dimen/_4dp"
         android:background="@color/color_date"
         android:layout_alignParentRight="true"
         />

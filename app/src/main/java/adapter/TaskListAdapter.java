@@ -35,7 +35,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     private Database mDatabase;
     private TimeUtils mTimeUtils;
 
-    public TaskListAdapter(Activity context, ArrayList<Task> list, String[] mStringPriority, String[] mStringStatus) {
+    public TaskListAdapter(Activity context, ArrayList<Task> list, String[] mStringPriority
+            , String[] mStringStatus) {
         this.mContext = context;
         this.mTaskItems = list;
         this.mStringPriority = mStringPriority;
@@ -97,7 +98,8 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item_layout, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item_layout
+                , parent, false);
         return new MyViewHolder(itemView);
     }
 

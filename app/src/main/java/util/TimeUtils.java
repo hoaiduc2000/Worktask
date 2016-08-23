@@ -22,15 +22,13 @@ public class TimeUtils {
     public static final int DAY = 24 * HOUR;
 
     public static long timeToMilisecond(String time, String date) {
-        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date mDate = null;
         try {
-            mDate = mSimpleDateFormat.parse(date + " " + time);
+            mDate = mSimpleDateFormat.parse(date + " " + time + ":00");
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
-        Log.d("date", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(mDate.getTime()));
         return mDate.getTime();
     }
 
@@ -74,22 +72,11 @@ public class TimeUtils {
 
     public static String getEstimateTime(long start, long due) {
         long mEstimate = due - start;
-        Log.d("date", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(due));
         long hourss = mEstimate / HOUR;
         int hours = (int) (mEstimate / HOUR);
         float minutes = (((int) mEstimate / MINUTE - hours * 60) * 100 / 60) / 10;
         if (minutes < 0)
             minutes = minutes * (-1);
-//        if (hours <= Constrans.MAX_FREE_HOUR && hours >= 1) {
-//            if (hours < 10)
-//                return "0" + hours + Constrans.END_MINUTE;
-//            return hours + Constrans.END_MINUTE;
-//        }
-//        if (hours < 1 && minutes >= 30)
-//            return 0.5 + "";
-//        if (hours > Constrans.MAX_FREE_HOUR)
-//            return Constrans.MAX_FREE_HOUR + Constrans.END_MINUTE;
-//        else return "0" + 0 + Constrans.END_MINUTE;
         return hours + "." + Math.round(minutes);
     }
 

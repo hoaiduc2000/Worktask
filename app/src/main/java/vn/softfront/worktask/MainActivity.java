@@ -260,12 +260,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         TimeUtils.sortStartDate(mTaskArrayList);
     }
 
-    public void setUnChecked() {
-        mCheckBoxNew.setChecked(false);
-        mCheckBoxImpogress.setChecked(false);
-        mCheckBoxResolved.setChecked(false);
-        mCheckBoxClosed.setChecked(false);
-    }
 
     public void checkCB(boolean isCheck, int n) {
         if (isCheck)

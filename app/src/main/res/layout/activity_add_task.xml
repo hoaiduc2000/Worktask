@@ -53,6 +53,7 @@
                 android:text="@string/done"
                 android:textColor="@color/color_done"
                 android:textSize="@dimen/_20sp"
+                android:layout_marginRight="@dimen/_8dp"
                 android:textStyle="normal"
                 android:visibility="gone" />
         </LinearLayout>
@@ -100,6 +101,7 @@
                     android:background="@drawable/edt_box_title"
                     android:hint="@string/hint_title"
                     android:paddingLeft="@dimen/_8dp"
+                    android:paddingRight="@dimen/_8dp"
                     android:singleLine="true" />
             </LinearLayout>
 
