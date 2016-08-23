@@ -1,5 +1,7 @@
 package util;
 
+import android.util.Log;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,7 +29,15 @@ public class TimeUtils {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
+        Log.d("date", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(mDate.getTime()));
         return mDate.getTime();
+    }
+
+    public static String[] milisecondToTime(long milisecond) {
+        String time = new SimpleDateFormat("HH:mm").format(milisecond);
+        String date = new SimpleDateFormat("dd/MM/yyyy").format(milisecond);
+        return new String[]{time, date};
     }
 
     public static Date timeToDate(String time, String date) {
@@ -41,6 +51,17 @@ public class TimeUtils {
         return mDate;
     }
 
+    public static Calendar timeToCalendar(String time, String date) {
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+        Calendar mCalendar = Calendar.getInstance();
+        try {
+            mCalendar.setTime(mSimpleDateFormat.parse(date + " " + time));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return mCalendar;
+    }
+
     public static int[] getFreeTime(long startDate, long dueDate) {
         int hours;
         int minutes;
@@ -51,37 +72,55 @@ public class TimeUtils {
         return values;
     }
 
-
     public static String getEstimateTime(long start, long due) {
         long mEstimate = due - start;
-        int hours = (int) mEstimate / HOUR;
-        int minutes = (int) mEstimate / MINUTE;
-        if (hours <= Constrans.maxFreeHour && hours >= 1)
-            return hours + "";
-        if (hours < 1 && minutes >= 30)
-            return 0.5 + "";
-        if (hours > Constrans.maxFreeHour)
-            return Constrans.maxFreeHour + "";
-        else return 0 + "";
+        Log.d("date", new SimpleDateFormat("dd/MM/yyyy HH:mm").format(due));
+        long hourss = mEstimate / HOUR;
+        int hours = (int) (mEstimate / HOUR);
+        float minutes = (((int) mEstimate / MINUTE - hours * 60) * 100 / 60) / 10;
+        if (minutes < 0)
+            minutes = minutes * (-1);
+//        if (hours <= Constrans.MAX_FREE_HOUR && hours >= 1) {
+//            if (hours < 10)
+//                return "0" + hours + Constrans.END_MINUTE;
+//            return hours + Constrans.END_MINUTE;
+//        }
+//        if (hours < 1 && minutes >= 30)
+//            return 0.5 + "";
+//        if (hours > Constrans.MAX_FREE_HOUR)
+//            return Constrans.MAX_FREE_HOUR + Constrans.END_MINUTE;
+//        else return "0" + 0 + Constrans.END_MINUTE;
+        return hours + "." + Math.round(minutes);
     }
 
-    public static void sortDate(ArrayList<Task> mList) {
+    public static void sortStartDate(ArrayList<Task> mList) {
         Collections.sort(mList, new Comparator<Task>() {
             @Override
             public int compare(Task lhs, Task rhs) {
-                return lhs.getDate().compareTo(rhs.getDate());
+                return lhs.getStartDate().compareTo(rhs.getStartDate());
             }
         });
     }
 
-    public static String getDueTime(long start, float estimate) {
-        long due = start + Long.valueOf(Math.round(estimate) * HOUR + "");
+    public static void sortDueDate(ArrayList<Task> mList) {
+        Collections.sort(mList, new Comparator<Task>() {
+            @Override
+            public int compare(Task lhs, Task rhs) {
+                return lhs.getDueDate().compareTo(rhs.getDueDate());
+            }
+        });
+    }
+
+    public static String getDueTime(long start, double estimate) {
+        long due = start + Math.round(estimate * HOUR);
+        if (estimate == Constrans.INIT_ESTIMATE)
+            due = start + Math.round(HOUR / 2 + HOUR % 2);
         String time = new SimpleDateFormat("HH:mm").format(due);
         return time;
     }
 
-    public static String getDueDate(long start, float estimate) {
-        long due = start + Long.valueOf(Math.round(estimate) * HOUR + "");
+    public static String getDueDate(long start, double estimate) {
+        long due = start + Math.round(estimate * HOUR);
         String date = new SimpleDateFormat("dd/MM/yyyy").format(due);
         return date;
     }
@@ -94,13 +133,27 @@ public class TimeUtils {
         return new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
     }
 
-    public static long startTime(){
-
-        return 0;
+    public static boolean checkFreeTime(long mTask1, long mTask2) {
+        int mFreetime = (int) (mTask2 - mTask1);
+        if (mFreetime >= (30 * MINUTE))
+            return true;
+        return false;
     }
 
-    public static long endTime(){
+    public static String[] startTime() {
+        String[] startTime;
+        String time = new SimpleDateFormat("HH:mm").format(System.currentTimeMillis());
+        String date = new SimpleDateFormat("dd/MM/yyyy").format(System.currentTimeMillis());
+        startTime = new String[]{time, date};
 
-        return 0;
+        return startTime;
+    }
+
+    public static String[] endTime(long starttime) {
+        String[] dueTime;
+        String time = new SimpleDateFormat("HH:mm").format(starttime + 30 * MINUTE);
+        String date = new SimpleDateFormat("dd/MM/yyyy").format(starttime + 30 * MINUTE);
+        dueTime = new String[]{time, date};
+        return dueTime;
     }
 }

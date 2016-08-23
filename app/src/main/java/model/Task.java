@@ -17,13 +17,17 @@ public class Task {
     private String duedate;
     private String description;
     private String status;
-    private Date date;
 
     public Task() {
 
     }
 
-    public Date getDate() {
+    public Date getStartDate() {
+        return TimeUtils.timeToDate(getStarttime(), getStartdate());
+
+    }
+
+    public Date getDueDate() {
         return TimeUtils.timeToDate(getStarttime(), getStartdate());
 
     }

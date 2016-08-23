@@ -109,7 +109,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
                 .get(position).getStartdate() + " - ");
         holder.mTextViewDueDate.setText(mTaskItems.get(position).getDuetime() + " " + mTaskItems
                 .get(position).getDuedate());
-        holder.mTextViewPriority.setText(mTaskItems.get(position).getPriority());
+        holder.mTextViewPriority.setText(mTaskItems.get(position).getPriority() + " ");
         checkOverDeadline(mTaskItems.get(position), holder.mTextViewDueDate);
 
         if (mTaskItems.get(position).getPriority().equals(mStringPriority[1]))
@@ -205,8 +205,7 @@ public class TaskListAdapter extends RecyclerView.Adapter<TaskListAdapter.MyView
     }
 
     public void checkOverDeadline(Task mTask, TextView mTextView) {
-        int[] mTime = mTimeUtils.getFreeTime(System.currentTimeMillis(),mTimeUtils.timeToMilisecond(mTask.getDuetime()
-
+        int[] mTime = mTimeUtils.getFreeTime(System.currentTimeMillis(), mTimeUtils.timeToMilisecond(mTask.getDuetime()
                 , mTask.getDuedate()));
         if (mTime[0] < 1 && mTime[1] < 0)
             mTextView.setTextColor(mContext.getResources().getColor(R.color.color_Priorities_Immediate));

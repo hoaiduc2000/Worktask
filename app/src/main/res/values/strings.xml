@@ -21,7 +21,7 @@
     <string name="title_add">Title</string>
     <string name="startdate_add">Start Date</string>
     <string name="duedate_add">Due Date</string>
-    <string name="description_add">Description</string>
+    <string name="description_add">Description </string>
     <string name="estimate_add">Estimate Hours</string>
     <string name="hours_add">Hours</string>
     <string name="priority_add">Priority</string>
@@ -44,6 +44,12 @@
     <string name="empty_field_validate">Empty fields !</string>
     <string name="empty_field_estimate">Estimate is empty !</string>
     <string name="duplicated_task">Duplicated task !</string>
+    <string name="duplicated_time">Duplicated another task time!</string>
+    <string name="validate_description">Description too long!</string>
+    <string name="choose_time">Choose diffrent time</string>
+    <string name="time_equal">Due time must be more than start time 30 minutes !</string>
+    <string name="time_warning">Time conflict !</string>
+    <string name="date_warning">Date conflict !</string>
 
     <string-array name="priority">
         <item>Normal</item>
