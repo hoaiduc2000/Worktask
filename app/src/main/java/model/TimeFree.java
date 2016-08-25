@@ -19,11 +19,13 @@ public class TimeFree {
     }
 
     public long getStartTime() {
-        return startTime;
+        return TimeUtils.timeToMilisecond(TimeUtils.milisecondToTime(this.startTime)[0]
+                , TimeUtils.milisecondToTime(this.startTime)[1]);
     }
 
     public void setStartTime(long startTime) {
-        this.startTime = startTime;
+        this.startTime = TimeUtils.timeToMilisecond(TimeUtils.milisecondToTime(startTime)[0]
+                , TimeUtils.milisecondToTime(startTime)[1]);
 
     }
 
@@ -45,17 +47,13 @@ public class TimeFree {
 
     }
 
-    public long getDefaultDueTime(){
-        return (this.startTime + 30* TimeUtils.MINUTE);
+    public long getDefaultDueTime() {
+        return (this.startTime + 30 * TimeUtils.MINUTE);
     }
-
 
     public TimeFree(long startTime, long dueTime, long dueTime2) {
         this.startTime = startTime;
         this.dueTime = dueTime;
         this.dueTime2 = dueTime2;
-        Log.d("time 1",new SimpleDateFormat("HH:mm - dd/MM/yyyy").format(this.startTime)+"");
-        Log.d("time 1",new SimpleDateFormat("HH:mm - dd/MM/yyyy").format(this.dueTime)+"");
-        Log.d("time 1",new SimpleDateFormat("HH:mm - dd/MM/yyyy").format(this.dueTime2)+"");
     }
 }

@@ -34,6 +34,9 @@
     <string name="id">id</string>
     <string name="delete">Delete task</string>
     <string name="delete_confirm">Are you sure to delete this task?</string>
+    <string name="date">dd/MM/yyyy</string>
+    <string name="time">HH:mm</string>
+    <string name="time_sec">HH:mm:ss</string>
 
 
     <string name="empty_title_validate">Title is empty !</string>
