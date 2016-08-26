@@ -114,18 +114,48 @@
         android:id="@+id/recycle_view_task"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/status_filter"/>
+        android:layout_below="@+id/status_filter"
+        android:layout_above="@+id/divider_below"/>
 
     <ImageView
         android:id="@+id/image_view_add_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_above="@+id/divider_below"
         android:layout_marginBottom="@dimen/_16dp"
         android:layout_marginRight="@dimen/_16dp"
         android:clickable="true"
         android:elevation="@dimen/_20dp"
         android:background="@drawable/btn_add_task" />
 
+<RelativeLayout
+    android:id="@+id/divider_below"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_0.5dp"
+    android:background="@color/colorPrimary"
+    android:layout_above="@+id/layout_bottom"/>
+
+    <include layout="@layout/bottom_bar_layout"
+        android:id="@+id/layout_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
+
+    <FrameLayout
+        android:id="@+id/frame_time"
+        android:layout_width="@dimen/_100dp"
+        android:layout_height="@dimen/_100dp"
+        android:background="@color/color_list_item"
+
+        android:layout_centerInParent="true">
+        <TextView
+            android:id="@+id/text_view_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="@dimen/_30dp"
+            android:textColor="@color/color_Priorities_Immediate"
+            android:text="10:30"/>
+    </FrameLayout>
 </RelativeLayout>
