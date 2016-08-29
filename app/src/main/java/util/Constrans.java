@@ -7,7 +7,7 @@ public class Constrans {
 
     public static final int HOUR = 1;
     public static final int MINUTE = 10;
-    public static final double INIT_ESTIMATE = 0.5;
+    public static final String INIT_ESTIMATE = "30 minutes";
     public static final int MAX_FREE_HOUR = 32;
     public static final int MIN_FREE_MINUTES = 30;
     public static final int CB_NEW = 0;

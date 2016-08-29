@@ -19,7 +19,6 @@ public class TimeUtils {
     public static final int SECOND = 1000;
     public static final int MINUTE = 60 * SECOND;
     public static final int HOUR = 60 * MINUTE;
-    public static final int DAY = 24 * HOUR;
 
     public static long timeToMilisecond(String time, String date) {
         SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -72,12 +71,14 @@ public class TimeUtils {
 
     public static String getEstimateTime(long start, long due) {
         long mEstimate = due - start;
-        long hourss = mEstimate / HOUR;
         int hours = (int) (mEstimate / HOUR);
-        float minutes = (((int) mEstimate / MINUTE - hours * 60) * 100 / 60) / 10;
+        int minutes = (int) (mEstimate / MINUTE - hours * 60);
         if (minutes < 0)
             minutes = minutes * (-1);
-        return hours + "." + Math.round(minutes);
+        if (hours == 0)
+            return minutes + " minutes";
+        else
+            return hours + " hour " + minutes + " minutes";
     }
 
     public static void sortStartDate(ArrayList<Task> mList) {
@@ -87,29 +88,6 @@ public class TimeUtils {
                 return lhs.getStartDate().compareTo(rhs.getStartDate());
             }
         });
-    }
-
-    public static void sortDueDate(ArrayList<Task> mList) {
-        Collections.sort(mList, new Comparator<Task>() {
-            @Override
-            public int compare(Task lhs, Task rhs) {
-                return lhs.getDueDate().compareTo(rhs.getDueDate());
-            }
-        });
-    }
-
-    public static String getDueTime(long start, double estimate) {
-        long due = start + Math.round(estimate * HOUR);
-        if (estimate == Constrans.INIT_ESTIMATE)
-            due = start + Math.round(HOUR / 2 + HOUR % 2);
-        String time = new SimpleDateFormat("HH:mm").format(due);
-        return time;
-    }
-
-    public static String getDueDate(long start, double estimate) {
-        long due = start + Math.round(estimate * HOUR);
-        String date = new SimpleDateFormat("dd/MM/yyyy").format(due);
-        return date;
     }
 
     public static String getCurrentTime() {
@@ -143,4 +121,51 @@ public class TimeUtils {
         dueTime = new String[]{time, date};
         return dueTime;
     }
+
+    public static int[] position(String startTime, String dueTime) throws ParseException {
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        Date mStart = mSimpleDateFormat.parse(startTime + ":" + "00");
+        Date mDue = mSimpleDateFormat.parse(dueTime + ":" + "00");
+        int start = mStart.getHours() * 60 + mStart.getMinutes();
+        int due = mDue.getHours() * 60 + mDue.getMinutes();
+        return new int[]{start / 10, due / 10};
+    }
+
+    public static String getDayOfWeek(int n) {
+        String dayOfWeek = " ";
+        switch (n) {
+            case 1:
+                dayOfWeek = "Sun";
+                break;
+            case 2:
+                dayOfWeek = "Mon";
+                break;
+            case 3:
+                dayOfWeek = "Tue";
+                break;
+            case 4:
+                dayOfWeek = "Wed";
+                break;
+            case 5:
+                dayOfWeek = "Thu";
+                break;
+            case 6:
+                dayOfWeek = "Fri";
+                break;
+            case 7:
+                dayOfWeek = "Sat";
+                break;
+        }
+
+        return dayOfWeek;
+    }
+
+    public static String[] getCalendar(int n) {
+        Calendar mCalendar = Calendar.getInstance();
+        mCalendar.add(Calendar.DAY_OF_MONTH, n);
+        String mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy").format(mCalendar.getTime());
+        String day = getDayOfWeek(mCalendar.get(Calendar.DAY_OF_WEEK));
+        return new String[]{day + " " + mSimpleDateFormat, mSimpleDateFormat};
+    }
+
 }

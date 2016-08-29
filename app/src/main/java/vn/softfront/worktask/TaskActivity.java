@@ -3,21 +3,24 @@ package vn.softfront.worktask;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -41,7 +44,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     private EditText mEditTextDateStart;
     private EditText mEditTextTimeDue;
     private EditText mEditTextDateDue;
-    private EditText mEditTextEstimate;
 
     private Spinner mSpinnerPriority;
     private Spinner mSpinnerStatus;
@@ -51,12 +53,24 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     private TextView mTextViewWarning;
     private TextView mTextViewStatus;
 
+    private LinearLayout mLinearLayout;
+    private FrameLayout mFrameTime;
+    private TextView mTextView;
+    private FrameLayout[] mFrameLayout;
+
+    private ImageView mImageViewPre;
+    private ImageView mImageViewNext;
+
     private TextView mTextViewTitle;
     private TextView mTextViewDescription;
     private TextView mTextViewPriority;
     private TextView mTextViewStartDate;
     private TextView mTextViewDueDate;
     private TextView mTextViewEstimate;
+    private TextView mTextViewEstimateAdd;
+    private TextView mTextViewPreDay;
+    private TextView mTextViewCurrentDay;
+    private TextView mTextViewNextDay;
 
 
     private Database mDatabase;
@@ -66,6 +80,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     private String[] mStringStatus;
     private String[] mStringHeader;
     private String[] mStringWaring;
+    private String[] mTime;
     private String mMode;
     private String mStartTimeDefault;
     private String mStartDateDefault;
@@ -76,7 +91,8 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     private String mDateTemp;
 
     private int mId;
-    private boolean flag;
+    private int n;
+    private Rect mRect;
 
     private ArrayList<TimeFree> mListTimeFree;
     private ArrayList<Task> mListTask;
@@ -104,11 +120,21 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             case R.id.edit_text_due_date:
                 showDatePicker(mEditTextDateDue, 1);
                 break;
-            case R.id.image_view_back:
+            case R.id.image_view_return:
                 finish();
                 break;
             case R.id.text_view_done:
                 saveTask();
+                break;
+            case R.id.image_view_back:
+                n = n - 1;
+                initDateBar(n);
+                updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+                break;
+            case R.id.image_view_next:
+                n = n + 1;
+                initDateBar(n);
+                updateTimeTracker(TimeUtils.getCalendar(n)[1]);
                 break;
         }
     }
@@ -133,40 +159,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     }
 
-    public void onEstimateTextChange() {
-        flag = true;
-        mEditTextEstimate.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                double estimate = 0;
-                if (flag == true)
-                    try {
-                        estimate = Double.parseDouble(s.toString());
-                        mEditTextTimeDue.setText(TimeUtils.getDueTime(mTimeUtils.timeToMilisecond
-                                (mEditTextTimeStart.getText().toString()
-                                        , mEditTextDateStart.getText().toString()), estimate));
-                        mEditTextDateDue.setText(TimeUtils.getDueDate(mTimeUtils.timeToMilisecond
-                                (mEditTextTimeStart.getText().toString()
-                                        , mEditTextDateStart.getText().toString()), estimate));
-                    } catch (Exception e) {
-
-                    }
-
-                setWarning(null);
-            }
-        });
-    }
-
     public void initDataEdit() {
         getTimeFree();
         mDatabase.open();
@@ -185,7 +177,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mEditTextDateStart.setText(mTask.getStartdate());
         mEditTextTimeDue.setText(mTask.getDuetime());
         mEditTextDateDue.setText(mTask.getDuedate());
-        mEditTextEstimate.setText(mTask.getEstimate());
+        mTextViewEstimateAdd.setText(mTask.getEstimate());
         setWarning(mTask);
         mDatabase.close();
     }
@@ -193,7 +185,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     public void setPreviewMode() {
         mDatabase.open();
         mEditTextTitle.setFocusable(false);
-        mEditTextEstimate.setFocusable(false);
         mEditTextDescription.setFocusable(false);
         mEditTextTimeStart.setOnClickListener(null);
         mEditTextDateStart.setOnClickListener(null);
@@ -214,14 +205,14 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     }
 
     public void initView() {
-        mImageViewBack = (ImageView) findViewById(R.id.image_view_back);
+        mImageViewBack = (ImageView) findViewById(R.id.image_view_return);
         mEditTextTitle = (EditText) findViewById(R.id.edit_text_title);
         mEditTextDescription = (EditText) findViewById(R.id.edit_text_description);
         mEditTextTimeStart = (EditText) findViewById(R.id.edit_text_start_time);
         mEditTextDateStart = (EditText) findViewById(R.id.edit_text_start_date);
         mEditTextTimeDue = (EditText) findViewById(R.id.edit_text_due_time);
         mEditTextDateDue = (EditText) findViewById(R.id.edit_text_due_date);
-        mEditTextEstimate = (EditText) findViewById(R.id.edit_text_estimate);
+
 
         mSpinnerPriority = (Spinner) findViewById(R.id.spinner_priority);
         mSpinnerStatus = (Spinner) findViewById(R.id.spinner_status);
@@ -236,6 +227,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mTextViewStartDate = (TextView) findViewById(R.id.text_view_startdate);
         mTextViewDueDate = (TextView) findViewById(R.id.text_view_duedate);
         mTextViewEstimate = (TextView) findViewById(R.id.text_view_estimate);
+        mTextViewEstimateAdd = (TextView) findViewById(R.id.text_view_estimate_add);
 
         mTextViewTitle.setText(getResources().getString(R.string.title_add) + " ");
         mTextViewDescription.setText(getResources().getString(R.string.description_add) + " ");
@@ -253,6 +245,56 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mEditTextDateDue.setOnClickListener(this);
         mImageViewBack.setOnClickListener(this);
 
+        mTextView = (TextView) this.findViewById(R.id.text_view_time);
+        mFrameTime = (FrameLayout) this.findViewById(R.id.frame_time);
+
+        mTextViewPreDay = (TextView) findViewById(R.id.text_view_pre_day);
+        mTextViewCurrentDay = (TextView) findViewById(R.id.text_view_current_day);
+        mTextViewNextDay = (TextView) findViewById(R.id.text_view_next_day);
+
+        mImageViewPre = (ImageView) findViewById(R.id.image_view_back);
+        mImageViewNext = (ImageView) findViewById(R.id.image_view_next);
+        mImageViewPre.setOnClickListener(this);
+        mImageViewNext.setOnClickListener(this);
+
+        n = 0;
+        initDateBar(0);
+        mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
+        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams
+                .MATCH_PARENT, 1f);
+        mFrameLayout = new FrameLayout[140];
+        for (int i = 0; i < 140; i++) {
+            mFrameLayout[i] = new FrameLayout(this);
+            mFrameLayout[i].setId(i);
+            mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getActionMasked()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mTextView.setText(getTime(v.getId()));
+                            mFrameTime.setVisibility(View.VISIBLE);
+                            mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            mFrameTime.setVisibility(View.GONE);
+                            updateStartTime(v.getId());
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            if (!mRect.contains((int) event.getX(), (int) event.getY())) {
+                                mTextView.setText(getTime(v.getId()));
+                                mFrameTime.setVisibility(View.VISIBLE);
+                                break;
+                            }
+                            return true;
+                    }
+                    return true;
+                }
+            });
+            mLinearLayout.addView(mFrameLayout[i], mParams);
+        }
+        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+
         if (mMode.equals(mStringMode[0])) {
             mTextViewHeader.setText(mStringHeader[0]);
             mTextViewWarning.setVisibility(View.GONE);
@@ -263,7 +305,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             onTitleTextChance();
             initTime();
             setWarning(null);
-            onEstimateTextChange();
             mTextViewDone.setVisibility(View.VISIBLE);
             mTextViewWarning.setVisibility(View.VISIBLE);
             mTextViewHeader.setText(mStringHeader[1]);
@@ -272,9 +313,17 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mTextViewDone.setVisibility(View.VISIBLE);
             mTextViewHeader.setText(mStringHeader[2]);
             initDataEdit();
-            onEstimateTextChange();
+        } else if (mMode.equals(mStringMode[3])) {
+            onTitleTextChance();
+            getTimeFree();
+            initTrackerTime();
+            setWarning(null);
+            mTextViewDone.setVisibility(View.VISIBLE);
+            mTextViewWarning.setVisibility(View.VISIBLE);
+            mTextViewHeader.setText(mStringHeader[1]);
         }
     }
+
 
     public void initData() {
         mDatabase = new Database(this);
@@ -288,6 +337,109 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mMode = mBundle.getString(this.getResources().getString(R.string.mode));
         if (mMode.equals(mStringMode[0]) || mMode.equals(mStringMode[2]))
             mId = mBundle.getInt(this.getResources().getString(R.string.id));
+        else if (mMode.equals(mStringMode[3]))
+            mTime = mBundle.getStringArray(getResources().getString(R.string.createtime));
+
+    }
+
+    public void initTrackerTime() {
+        mEditTextTimeStart.setText(mTime[0]);
+        mEditTextDateStart.setText(mTime[1]);
+        long startTime = TimeUtils.timeToMilisecond(mTime[0], mTime[1]);
+        String[] dueTime = TimeUtils.endTime(startTime);
+        mEditTextTimeDue.setText(dueTime[0]);
+        mEditTextDateDue.setText(dueTime[1]);
+        mTextViewEstimateAdd.setText(Constrans.INIT_ESTIMATE);
+
+    }
+
+    public void initDateBar(int n) {
+        mTextViewPreDay.setText(TimeUtils.getCalendar(n - 1)[0]);
+        mTextViewCurrentDay.setText(TimeUtils.getCalendar(n)[0]);
+        mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
+    }
+
+    public void updateTimeTracker(String date) {
+        mDatabase.open();
+        ArrayList<Task> mListTask = mDatabase.getAllTask();
+        ArrayList<Task> mListTaskTemp = new ArrayList<>();
+        for (int i = 0; i < mListTask.size(); i++)
+            if (mListTask.get(i).getStartdate().equals(date))
+                mListTaskTemp.add(mListTask.get(i));
+        resetTimeTracker();
+        initTimeTracker(mListTaskTemp);
+    }
+
+    public void updateStartTime(int id) {
+
+        long dueTime = TimeUtils.timeToMilisecond(mEditTextTimeDue.getText().toString()
+                , mEditTextDateDue.getText().toString());
+        long newStartTime = TimeUtils.timeToMilisecond(getTime(id)
+                , TimeUtils.getCalendar(n)[1]);
+
+        if (newStartTime < System.currentTimeMillis())
+            showDialog(getResources().getString(R.string.time_conflict));
+        else {
+            if (!TimeUtils.checkFreeTime(newStartTime, dueTime)) {
+                String due[] = TimeUtils.endTime(newStartTime);
+                mEditTextTimeDue.setText(due[0]);
+                mEditTextDateDue.setText(due[1]);
+            }
+
+            mEditTextTimeStart.setText(getTime(id));
+            mEditTextDateStart.setText(TimeUtils.getCalendar(n)[1]);
+
+            long dueTime2 = TimeUtils.timeToMilisecond(mEditTextTimeDue.getText().toString()
+                    , mEditTextDateDue.getText().toString());
+            mTextViewEstimateAdd.setText(TimeUtils.getEstimateTime(newStartTime, dueTime2));
+        }
+
+    }
+
+    public void initTimeTracker(ArrayList<Task> mTaskArrayList) {
+        for (int i = 0; i < mFrameLayout.length; i++) {
+            for (int j = 0; j < mTaskArrayList.size(); j++) {
+                String start = mTaskArrayList.get(j).getStarttime();
+                String due = mTaskArrayList.get(j).getDuetime();
+                int n[] = null;
+                try {
+                    n = TimeUtils.position(start, due);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                if (i > n[0] && i < n[1])
+                    mFrameLayout[i].setBackgroundColor(getResources()
+                            .getColor(R.color.color_Priorities_Immediate));
+            }
+        }
+    }
+
+    public void resetTimeTracker() {
+        for (int i = 0; i < mFrameLayout.length; i++)
+            mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
+    }
+
+    public String getTime(int n) {
+        n = n * 10;
+        String h = "";
+        String m = "";
+        int hour = n / (60);
+        int minute = n % 60;
+        if (hour < 10)
+            h = "0" + hour;
+        else if (hour == 0)
+            h = "00";
+        else
+            h = hour + "";
+        if (minute < 10)
+            m = "0" + minute;
+        else if (minute == 0)
+            m = "00";
+        else
+            m = minute + "";
+
+        return h + ":" + m;
     }
 
     public void getTimeFree() {
@@ -370,7 +522,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     public void initTime() {
         getTimeFree();
-        mEditTextEstimate.setText(Constrans.INIT_ESTIMATE + "");
+        mTextViewEstimateAdd.setText(Constrans.INIT_ESTIMATE);
         if (mListTask.size() >= 1) {
             if (mListTimeFree.size() == 1) {
                 if (System.currentTimeMillis() > mListTimeFree.get(0).getStartTime()) {
@@ -429,20 +581,18 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     hour = "0" + hour;
                 if (selectedMinute < Constrans.MINUTE)
                     minute = "0" + minute;
-                flag = false;
                 mTimeTemp = hour + ":" + minute;
                 if (mode == 0) {
-                    if (checkAvaiableStartTime(mTimeTemp, mEditTextDateStart.getText().toString()))
+                    if (checkAvailableStartTime(mTimeTemp, mEditTextDateStart.getText().toString()))
                         mEditText.setText(mTimeTemp);
-                    else showDialog(getResources().getString(R.string.time_warning));
+                    else showDialog(getResources().getString(R.string.time_conflict));
                 } else {
-                    if (checkAvaiableDueTime(mTimeTemp, mEditTextDateDue.getText().toString()))
+                    if (checkAvailableDueTime(mTimeTemp, mEditTextDateDue.getText().toString()))
                         mEditText.setText(mTimeTemp);
-                    else showDialog(getResources().getString(R.string.time_warning));
+                    else showDialog(getResources().getString(R.string.time_conflict));
                 }
                 setEstimateTime();
                 setWarning(null);
-                flag = true;
             }
         }, hour, minute, true);
         mTimePicker.show();
@@ -470,27 +620,25 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     day = "0" + day;
                 if (monthOfYear + 1 < Constrans.MINUTE)
                     month = "0" + month;
-                flag = false;
                 mDateTemp = day + "/" + month + "/" + year;
                 if (mode == 0) {
-                    if (checkAvaiableStartTime(mEditTextTimeStart.getText().toString(), mDateTemp))
+                    if (checkAvailableStartTime(mEditTextTimeStart.getText().toString(), mDateTemp))
                         mEditText.setText(mDateTemp);
                     else
-                        showDialog(getResources().getString(R.string.date_warning));
+                        showDialog(getResources().getString(R.string.date_conflict));
                 } else {
-                    if (checkAvaiableDueTime(mEditTextTimeDue.getText().toString(), mDateTemp))
+                    if (checkAvailableDueTime(mEditTextTimeDue.getText().toString(), mDateTemp))
                         mEditText.setText(mDateTemp);
-                    else showDialog(getResources().getString(R.string.date_warning));
+                    else showDialog(getResources().getString(R.string.date_conflict));
                 }
                 setEstimateTime();
                 setWarning(null);
-                flag = true;
             }
         }, year, month, day);
         mDatePicker.show();
     }
 
-    public boolean checkAvaiableStartTime(String time, String date) {
+    public boolean checkAvailableStartTime(String time, String date) {
         long startTime = TimeUtils.timeToMilisecond(time, date);
         int count = 0;
         int flag = 0;
@@ -511,7 +659,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         else return false;
     }
 
-    public boolean checkAvaiableDueTime(String time, String date) {
+    public boolean checkAvailableDueTime(String time, String date) {
         long dueTime = TimeUtils.timeToMilisecond(time, date);
         int count = 0;
         int flag = 0;
@@ -572,7 +720,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             long due = mTimeUtils.timeToMilisecond(mEditTextTimeDue.getText().toString()
                     , mEditTextDateDue.getText().toString());
             String mEstimateTime = mTimeUtils.getEstimateTime(start, due);
-            mEditTextEstimate.setText(mEstimateTime);
+            mTextViewEstimateAdd.setText(mEstimateTime);
         }
     }
 
@@ -638,7 +786,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mTask.setTitle(mEditTextTitle.getText().toString());
         mTask.setDescription(mEditTextDescription.getText().toString());
         mTask.setPriority(mSpinnerPriority.getSelectedItem().toString());
-        mTask.setEstimate(mEditTextEstimate.getText().toString());
+        mTask.setEstimate(mTextViewEstimateAdd.getText().toString());
         mTask.setStatus(getResources().getString(R.string.status_new));
         mTask.setStarttime(mEditTextTimeStart.getText().toString());
         mTask.setStartdate(mEditTextDateStart.getText().toString());
@@ -648,9 +796,9 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         long startTime = TimeUtils.timeToMilisecond(mTask.getStarttime(), mTask.getStartdate());
         long dueTime = TimeUtils.timeToMilisecond(mTask.getDuetime(), mTask.getDuedate());
         try {
-            char c = mEditTextTitle.getText().toString().charAt(0);
-            float m = Float.parseFloat(mEditTextEstimate.getText().toString());
-            if (mMode.equals(mStringMode[1]))
+            if (mTask.getTitle().length() == 0)
+                throw new StringIndexOutOfBoundsException();
+            if (mMode.equals(mStringMode[1]) || mMode.equals(mStringMode[3]))
                 if (checkDuplicateTask()) {
                     if (TimeUtils.checkFreeTime(startTime, dueTime)) {
                         long n = mDatabase.addTask(mTask, mTask.getTitle());
@@ -680,11 +828,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                         this.getResources().getString(R.string.choose_time));
             }
             mDatabase.close();
-        } catch (NumberFormatException e) {
-            showDialog(this.getResources().getString(R.string.empty_field_estimate));
         } catch (StringIndexOutOfBoundsException e) {
             showDialog(this.getResources().getString(R.string.empty_title_validate));
         }
+
     }
 
     public void showDialog(String message) {
