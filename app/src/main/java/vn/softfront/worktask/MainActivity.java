@@ -7,10 +7,18 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.DragEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +43,9 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
 
     private RecyclerView mRecyclerView;
     private TaskListAdapter mTaskListAdapter;
+    private LinearLayout mLinearLayout;
+    private FrameLayout mFrameLayout;
+    private TextView mTextView;
 
     private StatusDialogAdapter mStatusDialogAdapter;
     private ArrayList<Task> mTaskArrayList;
@@ -191,6 +202,29 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
 
         mTaskListAdapter = new TaskListAdapter(this, mTaskArrayList, mStringPriority, mStringStatus);
 
+        mTextView = (TextView) findViewById(R.id.text_view_time);
+        mFrameLayout = (FrameLayout) findViewById(R.id.frame_time);
+        mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
+//        mLinearLayout.setWeightSum(1440);
+
+        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+
+        for (int i = 0; i < 288; i++) {
+            FrameLayout mFrameLayout = new FrameLayout(this);
+            mFrameLayout.setId(i);
+//            mFrameLayout.setLayoutParams(mParams);
+            mFrameLayout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    mTextView.setText(getTime(v.getId()));
+                    Log.d("id", v.getId() + "");
+                    return false;
+                }
+            });
+            if (i * 5 > 720)
+                mFrameLayout.setBackgroundColor(getResources().getColor(R.color.color_Priorities_Immediate));
+            mLinearLayout.addView(mFrameLayout, mParams);
+        }
         mTaskListAdapter.setOnClickItemListener(this);
         mTaskListAdapter.setOnLongClickItemListener(this);
         mTaskListAdapter.setOnClickEditListener(this);
@@ -206,6 +240,29 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         });
         initCheckBox();
     }
+
+    public String getTime(int n) {
+        n = n * 5;
+        String h = "";
+        String m = "";
+        int hour = n / (60);
+        int minite = n % 60;
+        if (hour < 10)
+            h = "0" + hour;
+        else if (hour == 0)
+            h = "00";
+        else
+            h = hour + "";
+        if (minite < 10)
+            m = "0" + minite;
+        else if (minite == 0)
+            m = "00";
+        else
+            m = minite + "";
+
+        return h + ":" + m;
+    }
+
 
     public void initData() {
         mStringPriority = getResources().getStringArray(R.array.priority);

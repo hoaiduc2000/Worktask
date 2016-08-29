@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.Time;
 import java.util.Date;
 import util.TimeUtils;
 
@@ -110,5 +111,17 @@ public class Task {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getStart(){
+        long n = TimeUtils.timeToMilisecond(this.starttime,this.startdate);
+        int minute = (int)(n/TimeUtils.MINUTE);
+        return minute;
+    }
+
+    public int getDue(){
+        long n = TimeUtils.timeToMilisecond(this.duetime,this.duedate);
+        int minute = (int)(n/TimeUtils.MINUTE);
+        return minute;
     }
 }
