@@ -3,23 +3,22 @@ package vn.softfront.worktask;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -39,13 +38,19 @@ import util.Divider;
 public class MainActivity extends Activity implements CompoundButton.OnCheckedChangeListener,
         TaskListAdapter.OnClickItemListener, TaskListAdapter.OnLongClickItemListener,
         TaskListAdapter.OnClickEditListener, DialogUntil.IEvenCancel,
-        DialogUntil.IEvenDeleteDialog, DialogUntil.IEvenDelete, StatusDialogAdapter.OnDialogItemClickListener {
+        DialogUntil.IEvenDeleteDialog, DialogUntil.IEvenDelete, StatusDialogAdapter.OnDialogItemClickListener, View.OnClickListener, View.OnTouchListener {
 
     private RecyclerView mRecyclerView;
     private TaskListAdapter mTaskListAdapter;
+
     private LinearLayout mLinearLayout;
-    private FrameLayout mFrameLayout;
+    private FrameLayout mFrameTime;
     private TextView mTextView;
+    private FrameLayout[] mFrameLayout;
+
+    private TextView mTextViewPreDay;
+    private TextView mTextViewCurrentDay;
+    private TextView mTextViewNextDay;
 
     private StatusDialogAdapter mStatusDialogAdapter;
     private ArrayList<Task> mTaskArrayList;
@@ -53,6 +58,8 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private ArrayList<String> mFilterList;
 
     private ImageView mImageViewAdd;
+    private ImageView mImageViewPre;
+    private ImageView mImageViewNext;
 
     private Database mDatabase;
 
@@ -65,6 +72,8 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private CheckBox mCheckBoxResolved;
     private CheckBox mCheckBoxClosed;
     private int mId;
+    private int n;
+    private Rect mRect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,17 +83,39 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         initView();
     }
 
-
     @Override
     protected void onRestart() {
         super.onRestart();
         mDatabase.open();
+        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
         checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
         checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
         checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
         checkCB(mCheckBoxClosed.isChecked(), Constrans.CB_CLOSED);
         sortTask();
         mTaskListAdapter.notifyDataSetChanged();
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.image_view_back:
+                n = n - 1;
+                initDateBar(n);
+                updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+                break;
+            case R.id.image_view_next:
+                n = n + 1;
+                initDateBar(n);
+                updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+                break;
+        }
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        return false;
     }
 
     @Override
@@ -109,11 +140,9 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         }
     }
 
-
     @Override
     public void onClickItem(int id) {
-        Intent mIntent = new Intent(getApplication(), TaskActivity.class);
-        mIntent.putExtra(this.getResources().getString(R.string.mode), mStringMode[0]);
+        Intent mIntent = new Intent(getApplication(), DetailTaskActivity.class);
         mIntent.putExtra(this.getResources().getString(R.string.id), id);
         startActivity(mIntent);
     }
@@ -126,7 +155,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mIntent.putExtra(this.getResources().getString(R.string.id), id);
         startActivity(mIntent);
     }
-
 
     @Override
     public void onLongClickItem(int id, ArrayList<String> mListStatus, String title) {
@@ -154,13 +182,13 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mTaskArrayList.clear();
         mTaskArrayListTemp.clear();
         mDatabase.deleteTask(id);
+        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
         checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
         checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
         checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
         checkCB(mCheckBoxClosed.isChecked(), Constrans.CB_CLOSED);
         sortTask();
         mTaskListAdapter.notifyDataSetChanged();
-        mDatabase.close();
         mDialog.dismiss();
     }
 
@@ -203,28 +231,19 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mTaskListAdapter = new TaskListAdapter(this, mTaskArrayList, mStringPriority, mStringStatus);
 
         mTextView = (TextView) findViewById(R.id.text_view_time);
-        mFrameLayout = (FrameLayout) findViewById(R.id.frame_time);
-        mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
-//        mLinearLayout.setWeightSum(1440);
+        mFrameTime = (FrameLayout) findViewById(R.id.frame_time);
 
-        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
+        mTextViewPreDay = (TextView) findViewById(R.id.text_view_pre_day);
+        mTextViewCurrentDay = (TextView) findViewById(R.id.text_view_current_day);
+        mTextViewNextDay = (TextView) findViewById(R.id.text_view_next_day);
 
-        for (int i = 0; i < 288; i++) {
-            FrameLayout mFrameLayout = new FrameLayout(this);
-            mFrameLayout.setId(i);
-//            mFrameLayout.setLayoutParams(mParams);
-            mFrameLayout.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    mTextView.setText(getTime(v.getId()));
-                    Log.d("id", v.getId() + "");
-                    return false;
-                }
-            });
-            if (i * 5 > 720)
-                mFrameLayout.setBackgroundColor(getResources().getColor(R.color.color_Priorities_Immediate));
-            mLinearLayout.addView(mFrameLayout, mParams);
-        }
+        mImageViewPre = (ImageView) findViewById(R.id.image_view_back);
+        mImageViewNext = (ImageView) findViewById(R.id.image_view_next);
+        mImageViewPre.setOnClickListener(this);
+        mImageViewPre.setOnTouchListener(this);
+        mImageViewNext.setOnClickListener(this);
+        mImageViewNext.setOnTouchListener(this);
+
         mTaskListAdapter.setOnClickItemListener(this);
         mTaskListAdapter.setOnLongClickItemListener(this);
         mTaskListAdapter.setOnClickEditListener(this);
@@ -239,10 +258,96 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
             }
         });
         initCheckBox();
+        n = 0;
+        initDateBar(0);
+        mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
+        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams
+                .MATCH_PARENT, 1f);
+
+        mFrameLayout = new FrameLayout[140];
+        for (int i = 0; i < 140; i++) {
+            mFrameLayout[i] = new FrameLayout(this);
+            mFrameLayout[i].setId(i);
+            mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getActionMasked()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mTextView.setText(getTime(v.getId()));
+                            mFrameTime.setVisibility(View.VISIBLE);
+                            mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            mFrameTime.setVisibility(View.GONE);
+                            createTask(v.getId());
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            if (!mRect.contains((int) event.getX(), (int) event.getY())) {
+                                mTextView.setText(getTime(v.getId()));
+                                mFrameTime.setVisibility(View.VISIBLE);
+                                break;
+                            }
+                            return true;
+                    }
+                    return true;
+                }
+            });
+            mLinearLayout.addView(mFrameLayout[i], mParams);
+        }
+        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+    }
+
+    public void createTask(int time) {
+        String mTime[] = new String[]{getTime(time), TimeUtils.getCalendar(n)[1]};
+        Intent mIntent = new Intent(this, TaskActivity.class);
+        mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[3]);
+        mIntent.putExtra(getResources().getString(R.string.createtime), mTime);
+        startActivity(mIntent);
+    }
+
+    public void initDateBar(int n) {
+        mTextViewPreDay.setText(TimeUtils.getCalendar(n - 1)[0]);
+        mTextViewCurrentDay.setText(TimeUtils.getCalendar(n)[0]);
+        mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
+    }
+
+    public void updateTimeTracker(String date) {
+        mDatabase.open();
+        ArrayList<Task> mListTask = mDatabase.getAllTask();
+        ArrayList<Task> mListTaskTemp = new ArrayList<>();
+        for (int i = 0; i < mListTask.size(); i++)
+            if (mListTask.get(i).getStartdate().equals(date))
+                mListTaskTemp.add(mListTask.get(i));
+        resetTimeTracker();
+        initTimeTracker(mListTaskTemp);
+    }
+
+    public void initTimeTracker(ArrayList<Task> mTaskArrayList) {
+        for (int i = 0; i < mFrameLayout.length; i++) {
+            for (int j = 0; j < mTaskArrayList.size(); j++) {
+                String start = mTaskArrayList.get(j).getStarttime();
+                String due = mTaskArrayList.get(j).getDuetime();
+                int n[] = null;
+                try {
+                    n = TimeUtils.position(start, due);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                if (i > n[0] && i < n[1])
+                    mFrameLayout[i].setBackgroundColor(getResources()
+                            .getColor(R.color.color_Priorities_Immediate));
+            }
+        }
+    }
+
+    public void resetTimeTracker() {
+        for (int i = 0; i < mFrameLayout.length; i++)
+            mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
     }
 
     public String getTime(int n) {
-        n = n * 5;
+        n = n * 10;
         String h = "";
         String m = "";
         int hour = n / (60);
@@ -263,7 +368,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         return h + ":" + m;
     }
 
-
     public void initData() {
         mStringPriority = getResources().getStringArray(R.array.priority);
         mStringStatus = getResources().getStringArray(R.array.status);
@@ -276,7 +380,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         sortTask();
         mTaskArrayListTemp.addAll(mTaskArrayList);
     }
-
 
     public void addToFilter(String status) {
         Set<String> hs = new HashSet<>();
@@ -296,7 +399,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     }
 
     public void getFilterList() {
-        ArrayList<Task> mListTaskFilter = new ArrayList<>();
+        ArrayList<Task> mListTaskFilter;
         mDatabase.open();
         mListTaskFilter = mDatabase.filterTask(mFilterList);
         mTaskArrayList.clear();
@@ -317,7 +420,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         TimeUtils.sortStartDate(mTaskArrayList);
     }
 
-
     public void checkCB(boolean isCheck, int n) {
         if (isCheck)
             addToFilter(mStringStatus[n]);
@@ -332,5 +434,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
         checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
     }
+
 
 }

@@ -19,18 +19,19 @@
     <string name="status_closed">Closed</string>
     <string name="writing_testplan">Writing Testplan</string>
     <string name="title_add">Title</string>
-    <string name="startdate_add">Start Date</string>
-    <string name="duedate_add">Due Date</string>
-    <string name="description_add">Description </string>
-    <string name="estimate_add">Estimate Hours</string>
+    <string name="startdate_add">Start Date \u0020</string>
+    <string name="duedate_add">Due Date \u0020</string>
+    <string name="description_add">Description \u0020 </string>
+    <string name="estimate_add">Estimate Hours \u0020</string>
     <string name="hours_add">Hours</string>
-    <string name="priority_add">Priority</string>
-    <string name="status_add">Status</string>
+    <string name="priority_add">Priority \u0020</string>
+    <string name="status_add">Status \u0020</string>
     <string name="add_task_success">Add task success!</string>
     <string name="add_task_false">Add task false!</string>
     <string name="edit_task">Edit task success!</string>
     <string name="warning">There are more than 32 hours free from start date</string>
     <string name="mode">mode</string>
+    <string name="createtime">time</string>
     <string name="id">id</string>
     <string name="delete">Delete task</string>
     <string name="delete_confirm">Are you sure to delete this task?</string>
@@ -51,8 +52,18 @@
     <string name="validate_description">Description too long!</string>
     <string name="choose_time">Choose diffrent time</string>
     <string name="time_equal">Due time must be more than start time 30 minutes !</string>
-    <string name="time_warning">Time conflict !</string>
-    <string name="date_warning">Date conflict !</string>
+    <string name="time_conflict">Time conflict !</string>
+    <string name="date_conflict">Date conflict !</string>
+
+    <string name="description">-App helps to view tasks with priorities and time constraints for the app’s owner A task is shown its information as title, priority, estimate hours, start date, due date, description, status. \n
+-App can add and edit a task. \n
+-App can insert a task and time constraints with others are still correct. \n
+</string>
+    <string name="priority">Low</string>
+    <string name="startdate_detail">09:40 20/08/2016</string>
+    <string name="duedate_detail">10:10 20/08/2016</string>
+    <string name="estimate">30 minutes</string>
+    <string name="status_detail">New</string>
 
     <string-array name="priority">
         <item>Normal</item>
@@ -72,6 +83,7 @@
         <item>Preview</item>
         <item>Add</item>
         <item>Edit</item>
+        <item>Create</item>
     </string-array>
 
     <string-array name="header">

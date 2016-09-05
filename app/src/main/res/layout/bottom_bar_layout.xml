@@ -13,6 +13,7 @@
         android:weightSum="3">
 
         <TextView
+            android:id="@+id/text_view_pre_day"
             android:layout_width="@dimen/_0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -21,6 +22,7 @@
             android:textSize="@dimen/_10dp" />
 
         <TextView
+            android:id="@+id/text_view_current_day"
             android:layout_width="@dimen/_0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -29,6 +31,7 @@
             android:textSize="@dimen/_10dp" />
 
         <TextView
+            android:id="@+id/text_view_next_day"
             android:layout_width="@dimen/_0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

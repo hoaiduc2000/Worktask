@@ -147,7 +147,7 @@
         android:layout_width="@dimen/_100dp"
         android:layout_height="@dimen/_100dp"
         android:background="@color/color_list_item"
-
+        android:visibility="gone"
         android:layout_centerInParent="true">
         <TextView
             android:id="@+id/text_view_time"
