@@ -24,12 +24,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import data.Database;
-import model.Task;
-import model.TimeFree;
-import util.Constrans;
-import util.TimeUtils;
-import util.DialogUntil;
+import vn.softfront.worktask.data.Database;
+import vn.softfront.worktask.model.Task;
+import vn.softfront.worktask.model.TimeFree;
+import vn.softfront.worktask.util.Constrans;
+import vn.softfront.worktask.util.DialogUntil;
+import vn.softfront.worktask.util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.
@@ -376,6 +376,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     }
 
     public void initTimeTracker(ArrayList<Task> mTaskArrayList, ArrayList<Task> mTaskArrayListFull) {
+        boolean flag = false;
         for (int j = 0; j < mTaskArrayList.size(); j++) {
             String start = mTaskArrayList.get(j).getStarttime();
             String due = mTaskArrayList.get(j).getDuetime();
@@ -384,6 +385,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             long subDay = TimeUtils.dateToMilisecond(dueDate)
                     - TimeUtils.dateToMilisecond(startDate);
             int m[] = null;
+            if (mTaskArrayList.get(j).getId() == mId)
+                flag = true;
+            else
+                flag = false;
             try {
                 m = TimeUtils.position(start, due);
             } catch (ParseException e) {
@@ -392,16 +397,16 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             if (startDate.equals(dueDate)) {
                 for (int i = 0; i < mFrameLayout.length; i++)
                     if (i >= m[0] && i <= m[1])
-                        changeColor(i);
+                        changeColor(i, flag);
             } else if (subDay >= TimeUtils.DAY) {
                 if (startDate.equals(TimeUtils.getCalendar(n)[1])) {
                     for (int i = 0; i < mFrameLayout.length; i++)
                         if (i >= m[0])
-                            changeColor(i);
+                            changeColor(i, flag);
                 } else if (dueDate.equals(TimeUtils.getCalendar(n)[1])) {
                     for (int i = 0; i < mFrameLayout.length; i++)
                         if (i <= m[1])
-                            changeColor(i);
+                            changeColor(i, flag);
                 }
 
             }
@@ -415,9 +420,14 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             if (TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
                     > TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getStartdate())
                     && TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
-                    < TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getDuedate()))
+                    < TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getDuedate())) {
+                if (mTaskArrayListFull.get(i).getId() == mId)
+                    flag = true;
+                else
+                    flag = false;
                 for (int j = 0; j < mFrameLayout.length; j++)
-                    changeColor(j);
+                    changeColor(j, flag);
+            }
         }
     }
 
@@ -452,9 +462,13 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public void changeColor(int n) {
-        mFrameLayout[n].setBackgroundColor(getResources()
-                .getColor(R.color.color_bar_tracker));
+    public void changeColor(int n, boolean flag) {
+        if (!flag)
+            mFrameLayout[n].setBackgroundColor(getResources()
+                    .getColor(R.color.color_bar_tracker));
+        else
+            mFrameLayout[n].setBackgroundColor(getResources()
+                    .getColor(R.color.color_bar_edit));
         mFrameLayout[n].setOnTouchListener(null);
     }
 
@@ -726,8 +740,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
         if (mMode.equals(mStringMode[0]) || mMode.equals(mStringMode[2])) {
             Task mTask = mDatabase.getTask(mId);
-            if (mStartTimeDefault.equals(mTask.getStarttime()) && mStartDateDefault.equals(mTask.getStartdate())
-                    && mDueTimeDefault.equals(mTask.getDuetime()) && mDueDateDefault.equals(mTask.getDuedate()))
+            if (mStartTimeDefault.equals(mTask.getStarttime()) && mStartDateDefault
+                    .equals(mTask.getStartdate())
+                    && mDueTimeDefault.equals(mTask.getDuetime()) && mDueDateDefault
+                    .equals(mTask.getDuedate()))
                 return true;
         }
 

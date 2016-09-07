@@ -1,8 +1,7 @@
-package model;
+package vn.softfront.worktask.model;
 
-import java.sql.Time;
 import java.util.Date;
-import util.TimeUtils;
+import vn.softfront.worktask.util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.
@@ -24,11 +23,6 @@ public class Task {
     }
 
     public Date getStartDate() {
-        return TimeUtils.timeToDate(getStarttime(), getStartdate());
-
-    }
-
-    public Date getDueDate() {
         return TimeUtils.timeToDate(getStarttime(), getStartdate());
 
     }
@@ -115,12 +109,6 @@ public class Task {
 
     public int getStart(){
         long n = TimeUtils.timeToMilisecond(this.starttime,this.startdate);
-        int minute = (int)(n/TimeUtils.MINUTE);
-        return minute;
-    }
-
-    public int getDue(){
-        long n = TimeUtils.timeToMilisecond(this.duetime,this.duedate);
         int minute = (int)(n/TimeUtils.MINUTE);
         return minute;
     }

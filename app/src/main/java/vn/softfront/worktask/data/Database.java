@@ -1,4 +1,4 @@
-package data;
+package vn.softfront.worktask.data;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Task;
-import util.TimeUtils;
+import vn.softfront.worktask.model.Task;
+import vn.softfront.worktask.util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/27/2016.

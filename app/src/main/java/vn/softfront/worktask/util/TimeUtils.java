@@ -1,6 +1,4 @@
-package util;
-
-import android.util.Log;
+package vn.softfront.worktask.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,7 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 
-import model.Task;
+import vn.softfront.worktask.model.Task;
 
 /**
  * Created by nguyen.hoai.duc on 7/28/2016.
@@ -90,7 +88,7 @@ public class TimeUtils {
         if (hours == 0)
             return minutes + " minutes";
         else
-            return hours + " hour " + minutes + " minutes";
+            return hours + " hours " + minutes + " minutes";
     }
 
     public static void sortStartDate(ArrayList<Task> mList) {

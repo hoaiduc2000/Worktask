@@ -17,4 +17,5 @@
     <color name="color_background">#ffffff</color>
     <color name="color_list_item">#cfd8dc</color>
     <color name="color_bar_tracker">#FFF200</color>
+    <color name="color_bar_edit">#e91e63</color>
 </resources>

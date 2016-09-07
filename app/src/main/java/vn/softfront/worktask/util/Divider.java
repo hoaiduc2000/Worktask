@@ -1,4 +1,4 @@
-package util;
+package vn.softfront.worktask.util;
 
 import android.content.Context;
 import android.graphics.Canvas;

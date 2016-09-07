@@ -1,4 +1,4 @@
-package util;
+package vn.softfront.worktask.util;
 
 /**
  * Created by nguyen.hoai.duc on 8/30/2016.
