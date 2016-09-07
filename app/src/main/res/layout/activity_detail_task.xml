@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:focusableInTouchMode="true"
+    android:background="@color/color_background">
 
     <LinearLayout
         android:id="@+id/layout_add_header"
@@ -86,7 +87,7 @@
                 android:padding="@dimen/_8dp"
                 android:text="@string/description"
                 android:textColor="@color/color_text"
-                android:textSize="@dimen/_15dp" />
+                android:textSize="@dimen/_14dp" />
 
             <TextView
                 android:id="@+id/text_view_priority_detail"

@@ -19,12 +19,24 @@ public class TimeUtils {
     public static final int SECOND = 1000;
     public static final int MINUTE = 60 * SECOND;
     public static final int HOUR = 60 * MINUTE;
+    public static final int DAY = 24 * HOUR;
 
     public static long timeToMilisecond(String time, String date) {
         SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date mDate = null;
         try {
             mDate = mSimpleDateFormat.parse(date + " " + time + ":00");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return mDate.getTime();
+    }
+
+    public static long dateToMilisecond(String date) {
+        SimpleDateFormat mSimpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date mDate = null;
+        try {
+            mDate = mSimpleDateFormat.parse(date);
         } catch (ParseException e) {
             e.printStackTrace();
         }

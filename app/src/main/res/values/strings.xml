@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Worktask 1.0</string>
+    <string name="app_name">Worktask 2.0</string>
     <string name="title">Write meeting minutes</string>
     <string name="done">Done</string>
     <string name="hint_title">Enter title</string>

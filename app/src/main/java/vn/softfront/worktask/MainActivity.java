@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -196,6 +195,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void onItemClick(String status, Dialog mDialog) {
         mDatabase.open();
         mDatabase.updateStatus(mId, status);
+        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
         checkCB(mCheckBoxNew.isChecked(), Constrans.CB_NEW);
         checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
         checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
@@ -264,10 +264,91 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams
                 .MATCH_PARENT, 1f);
 
-        mFrameLayout = new FrameLayout[140];
-        for (int i = 0; i < 140; i++) {
+        mFrameLayout = new FrameLayout[144];
+        for (int i = 0; i < 144; i++) {
             mFrameLayout[i] = new FrameLayout(this);
             mFrameLayout[i].setId(i);
+            mLinearLayout.addView(mFrameLayout[i], mParams);
+        }
+        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+    }
+
+    public void createTask(int time) {
+        String mTime[] = new String[]{getTime(time), TimeUtils.getCalendar(n)[1]};
+        Intent mIntent = new Intent(this, TaskActivity.class);
+        mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[3]);
+        mIntent.putExtra(getResources().getString(R.string.createtime), mTime);
+        startActivity(mIntent);
+    }
+
+    public void initDateBar(int n) {
+        mTextViewPreDay.setText(TimeUtils.getCalendar(n - 1)[0]);
+        mTextViewCurrentDay.setText(TimeUtils.getCalendar(n)[0]);
+        mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
+    }
+
+    public void updateTimeTracker(String date) {
+        mDatabase.open();
+        ArrayList<Task> mListTask = mDatabase.getAllTask();
+        ArrayList<Task> mListTaskTemp = new ArrayList<>();
+        for (int i = 0; i < mListTask.size(); i++)
+            if (mListTask.get(i).getStartdate().equals(date) || mListTask.get(i)
+                    .getDuedate().equals(date))
+                if (mListTask.get(i).getStatus().equals(mStringStatus[0]) || mListTask.get(i)
+                        .getStatus().equals(mStringStatus[1]))
+                    mListTaskTemp.add(mListTask.get(i));
+        resetTimeTracker();
+        initTimeTracker(mListTaskTemp, mListTask);
+    }
+
+    public void initTimeTracker(ArrayList<Task> mTaskArrayList, ArrayList<Task> mTaskArrayListFull) {
+        for (int j = 0; j < mTaskArrayList.size(); j++) {
+            String start = mTaskArrayList.get(j).getStarttime();
+            String due = mTaskArrayList.get(j).getDuetime();
+            String startDate = mTaskArrayList.get(j).getStartdate();
+            String dueDate = mTaskArrayList.get(j).getDuedate();
+            long subDay = TimeUtils.dateToMilisecond(dueDate)
+                    - TimeUtils.dateToMilisecond(startDate);
+            int m[] = null;
+            try {
+                m = TimeUtils.position(start, due);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (startDate.equals(dueDate)) {
+                for (int i = 0; i < mFrameLayout.length; i++)
+                    if (i >= m[0] && i <= m[1])
+                        changeColor(i);
+            } else if (subDay >= TimeUtils.DAY) {
+                if (startDate.equals(TimeUtils.getCalendar(n)[1])) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i >= m[0])
+                            changeColor(i);
+                } else if (dueDate.equals(TimeUtils.getCalendar(n)[1])) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i <= m[1])
+                            changeColor(i);
+                }
+
+            }
+        }
+        for (int i = 0; i < mTaskArrayListFull.size(); i++)
+            if (!mTaskArrayListFull.get(i).getStatus().equals(mStringStatus[0]) && !mTaskArrayListFull
+                    .get(i).getStatus().equals(mStringStatus[1]))
+                mTaskArrayListFull.remove(i);
+        for (int i = 0; i < mTaskArrayListFull.size(); i++) {
+            if (TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
+                    > TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getStartdate())
+                    && TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
+                    < TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getDuedate()))
+                for (int j = 0; j < mFrameLayout.length; j++)
+                    changeColor(j);
+        }
+    }
+
+    public void resetTimeTracker() {
+        for (int i = 0; i < mFrameLayout.length; i++) {
+            mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
             mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -293,58 +374,15 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
                     return true;
                 }
             });
-            mLinearLayout.addView(mFrameLayout[i], mParams);
-        }
-        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
-    }
-
-    public void createTask(int time) {
-        String mTime[] = new String[]{getTime(time), TimeUtils.getCalendar(n)[1]};
-        Intent mIntent = new Intent(this, TaskActivity.class);
-        mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[3]);
-        mIntent.putExtra(getResources().getString(R.string.createtime), mTime);
-        startActivity(mIntent);
-    }
-
-    public void initDateBar(int n) {
-        mTextViewPreDay.setText(TimeUtils.getCalendar(n - 1)[0]);
-        mTextViewCurrentDay.setText(TimeUtils.getCalendar(n)[0]);
-        mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
-    }
-
-    public void updateTimeTracker(String date) {
-        mDatabase.open();
-        ArrayList<Task> mListTask = mDatabase.getAllTask();
-        ArrayList<Task> mListTaskTemp = new ArrayList<>();
-        for (int i = 0; i < mListTask.size(); i++)
-            if (mListTask.get(i).getStartdate().equals(date))
-                mListTaskTemp.add(mListTask.get(i));
-        resetTimeTracker();
-        initTimeTracker(mListTaskTemp);
-    }
-
-    public void initTimeTracker(ArrayList<Task> mTaskArrayList) {
-        for (int i = 0; i < mFrameLayout.length; i++) {
-            for (int j = 0; j < mTaskArrayList.size(); j++) {
-                String start = mTaskArrayList.get(j).getStarttime();
-                String due = mTaskArrayList.get(j).getDuetime();
-                int n[] = null;
-                try {
-                    n = TimeUtils.position(start, due);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                if (i > n[0] && i < n[1])
-                    mFrameLayout[i].setBackgroundColor(getResources()
-                            .getColor(R.color.color_Priorities_Immediate));
-            }
         }
     }
 
-    public void resetTimeTracker() {
-        for (int i = 0; i < mFrameLayout.length; i++)
-            mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
+    public void changeColor(int n) {
+        mFrameLayout[n].setBackgroundColor(getResources()
+                .getColor(R.color.color_bar_tracker));
+        mFrameLayout[n].setOnTouchListener(null);
     }
+
 
     public String getTime(int n) {
         n = n * 10;

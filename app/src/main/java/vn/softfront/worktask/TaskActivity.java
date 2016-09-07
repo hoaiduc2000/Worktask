@@ -262,35 +262,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
         LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams
                 .MATCH_PARENT, 1f);
-        mFrameLayout = new FrameLayout[140];
-        for (int i = 0; i < 140; i++) {
+        mFrameLayout = new FrameLayout[144];
+        for (int i = 0; i < 144; i++) {
             mFrameLayout[i] = new FrameLayout(this);
             mFrameLayout[i].setId(i);
-            mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getActionMasked()) {
-                        case MotionEvent.ACTION_DOWN:
-                            mTextView.setText(getTime(v.getId()));
-                            mFrameTime.setVisibility(View.VISIBLE);
-                            mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            mFrameTime.setVisibility(View.GONE);
-                            updateStartTime(v.getId());
-                            return true;
-                        case MotionEvent.ACTION_MOVE:
-                            if (!mRect.contains((int) event.getX(), (int) event.getY())) {
-                                mTextView.setText(getTime(v.getId()));
-                                mFrameTime.setVisibility(View.VISIBLE);
-                                break;
-                            }
-                            return true;
-                    }
-                    return true;
-                }
-            });
             mLinearLayout.addView(mFrameLayout[i], mParams);
         }
         updateTimeTracker(TimeUtils.getCalendar(n)[1]);
@@ -359,16 +334,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
     }
 
-    public void updateTimeTracker(String date) {
-        mDatabase.open();
-        ArrayList<Task> mListTask = mDatabase.getAllTask();
-        ArrayList<Task> mListTaskTemp = new ArrayList<>();
-        for (int i = 0; i < mListTask.size(); i++)
-            if (mListTask.get(i).getStartdate().equals(date))
-                mListTaskTemp.add(mListTask.get(i));
-        resetTimeTracker();
-        initTimeTracker(mListTaskTemp);
-    }
 
     public void updateStartTime(int id) {
 
@@ -396,29 +361,103 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     }
 
-    public void initTimeTracker(ArrayList<Task> mTaskArrayList) {
-        for (int i = 0; i < mFrameLayout.length; i++) {
-            for (int j = 0; j < mTaskArrayList.size(); j++) {
-                String start = mTaskArrayList.get(j).getStarttime();
-                String due = mTaskArrayList.get(j).getDuetime();
-                int n[] = null;
-                try {
-                    n = TimeUtils.position(start, due);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+    public void updateTimeTracker(String date) {
+        mDatabase.open();
+        ArrayList<Task> mListTask = mDatabase.getAllTask();
+        ArrayList<Task> mListTaskTemp = new ArrayList<>();
+        for (int i = 0; i < mListTask.size(); i++)
+            if (mListTask.get(i).getStartdate().equals(date) || mListTask.get(i)
+                    .getDuedate().equals(date))
+                if (mListTask.get(i).getStatus().equals(mStringStatus[0]) || mListTask.get(i)
+                        .getStatus().equals(mStringStatus[1]))
+                    mListTaskTemp.add(mListTask.get(i));
+        resetTimeTracker();
+        initTimeTracker(mListTaskTemp, mListTask);
+    }
+
+    public void initTimeTracker(ArrayList<Task> mTaskArrayList, ArrayList<Task> mTaskArrayListFull) {
+        for (int j = 0; j < mTaskArrayList.size(); j++) {
+            String start = mTaskArrayList.get(j).getStarttime();
+            String due = mTaskArrayList.get(j).getDuetime();
+            String startDate = mTaskArrayList.get(j).getStartdate();
+            String dueDate = mTaskArrayList.get(j).getDuedate();
+            long subDay = TimeUtils.dateToMilisecond(dueDate)
+                    - TimeUtils.dateToMilisecond(startDate);
+            int m[] = null;
+            try {
+                m = TimeUtils.position(start, due);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if (startDate.equals(dueDate)) {
+                for (int i = 0; i < mFrameLayout.length; i++)
+                    if (i >= m[0] && i <= m[1])
+                        changeColor(i);
+            } else if (subDay >= TimeUtils.DAY) {
+                if (startDate.equals(TimeUtils.getCalendar(n)[1])) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i >= m[0])
+                            changeColor(i);
+                } else if (dueDate.equals(TimeUtils.getCalendar(n)[1])) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i <= m[1])
+                            changeColor(i);
                 }
 
-                if (i > n[0] && i < n[1])
-                    mFrameLayout[i].setBackgroundColor(getResources()
-                            .getColor(R.color.color_Priorities_Immediate));
             }
+        }
+
+        for (int i = 0; i < mTaskArrayListFull.size(); i++)
+            if (!mTaskArrayListFull.get(i).getStatus().equals(mStringStatus[0]) && !mTaskArrayListFull
+                    .get(i).getStatus().equals(mStringStatus[1]))
+                mTaskArrayListFull.remove(i);
+        for (int i = 0; i < mTaskArrayListFull.size(); i++) {
+            if (TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
+                    > TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getStartdate())
+                    && TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
+                    < TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getDuedate()))
+                for (int j = 0; j < mFrameLayout.length; j++)
+                    changeColor(j);
         }
     }
 
     public void resetTimeTracker() {
-        for (int i = 0; i < mFrameLayout.length; i++)
+        for (int i = 0; i < mFrameLayout.length; i++) {
             mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
+            mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getActionMasked()) {
+                        case MotionEvent.ACTION_DOWN:
+                            mTextView.setText(getTime(v.getId()));
+                            mFrameTime.setVisibility(View.VISIBLE);
+                            mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            mFrameTime.setVisibility(View.GONE);
+                            updateStartTime(v.getId());
+                            return true;
+                        case MotionEvent.ACTION_MOVE:
+                            if (!mRect.contains((int) event.getX(), (int) event.getY())) {
+                                mTextView.setText(getTime(v.getId()));
+                                mFrameTime.setVisibility(View.VISIBLE);
+                                break;
+                            }
+                            return true;
+                    }
+                    return true;
+                }
+            });
+        }
     }
+
+    public void changeColor(int n) {
+        mFrameLayout[n].setBackgroundColor(getResources()
+                .getColor(R.color.color_bar_tracker));
+        mFrameLayout[n].setOnTouchListener(null);
+    }
+
 
     public String getTime(int n) {
         n = n * 10;
@@ -684,6 +723,13 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mStartDateDefault = mEditTextDateStart.getText().toString();
         mDueTimeDefault = mEditTextTimeDue.getText().toString();
         mDueDateDefault = mEditTextDateDue.getText().toString();
+
+        if (mMode.equals(mStringMode[0]) || mMode.equals(mStringMode[2])) {
+            Task mTask = mDatabase.getTask(mId);
+            if (mStartTimeDefault.equals(mTask.getStarttime()) && mStartDateDefault.equals(mTask.getStartdate())
+                    && mDueTimeDefault.equals(mTask.getDuetime()) && mDueDateDefault.equals(mTask.getDuedate()))
+                return true;
+        }
 
         int count = 0;
         long startTime = TimeUtils.timeToMilisecond(mStartTimeDefault, mStartDateDefault);

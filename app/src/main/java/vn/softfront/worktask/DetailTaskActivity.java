@@ -7,8 +7,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.sql.Time;
+
 import data.Database;
 import model.Task;
+import util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 8/29/2016.
@@ -45,20 +48,22 @@ public class DetailTaskActivity extends Activity {
         mId = mBundle.getInt(getResources().getString(R.string.id));
         mTask = mDatabase.getTask(mId);
         mDatabase.close();
-
+        long dueTime = TimeUtils.timeToMilisecond(mTask.getDuetime(), mTask.getDuedate());
         mStringPriority = getResources().getStringArray(R.array.priority);
-        if(mTask.getPriority().equals(mStringPriority[0]))
+        if (mTask.getPriority().equals(mStringPriority[0]))
             mTextViewPriority.setTextColor(getResources().getColor(R.color.color_Priorities_Normal));
-        else if(mTask.getPriority().equals(mStringPriority[1]))
+        else if (mTask.getPriority().equals(mStringPriority[1]))
             mTextViewPriority.setTextColor(getResources().getColor(R.color.color_Priorities_Low));
-        else if(mTask.getPriority().equals(mStringPriority[2]))
+        else if (mTask.getPriority().equals(mStringPriority[2]))
             mTextViewPriority.setTextColor(getResources().getColor(R.color.color_Priorities_High));
-        else if(mTask.getPriority().equals(mStringPriority[3]))
+        else if (mTask.getPriority().equals(mStringPriority[3]))
             mTextViewPriority.setTextColor(getResources().getColor(R.color.color_Priorities_Immediate));
         mTextViewTitle.setText(mTask.getTitle());
         mTextViewDescription.setText(mTask.getDescription());
         mTextViewPriority.setText(mTask.getPriority());
         mTextViewStartDate.setText(mTask.getStarttime() + " " + mTask.getStartdate());
+        if (dueTime < System.currentTimeMillis())
+            mTextViewDueDate.setTextColor(getResources().getColor(R.color.color_Priorities_Immediate));
         mTextViewDueDate.setText(mTask.getDuetime() + " " + mTask.getDuedate());
         mTextViewEstimate.setText(mTask.getEstimate());
         mTextViewStatus.setText(mTask.getStatus());
