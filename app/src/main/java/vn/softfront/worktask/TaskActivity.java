@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +28,7 @@ import java.util.Calendar;
 import vn.softfront.worktask.data.Database;
 import vn.softfront.worktask.model.Task;
 import vn.softfront.worktask.model.TimeFree;
+import vn.softfront.worktask.model.TimeUnit;
 import vn.softfront.worktask.util.Constrans;
 import vn.softfront.worktask.util.DialogUntil;
 import vn.softfront.worktask.util.TimeUtils;
@@ -92,10 +94,13 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     private int mId;
     private int n;
+    private int mPosition;
+    private int mWidth;
     private Rect mRect;
 
     private ArrayList<TimeFree> mListTimeFree;
     private ArrayList<Task> mListTask;
+    private ArrayList<TimeUnit> mListTimeUnit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +144,20 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        mListTimeUnit.clear();
+        mWidth = mLinearLayout.getWidth();
+        float n = (float) mWidth / 144;
+        for (int i = 0; i < 144; i++) {
+            TimeUnit mTimeUnit = new TimeUnit();
+            mTimeUnit.setStart(i * n);
+            mTimeUnit.setEnd((i + 1) * n);
+            mListTimeUnit.add(mTimeUnit);
+        }
+    }
+
     public void onTitleTextChance() {
         mEditTextTitle.addTextChangedListener(new TextWatcher() {
             @Override
@@ -156,7 +175,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
             }
         });
-
     }
 
     public void initDataEdit() {
@@ -257,6 +275,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mImageViewPre.setOnClickListener(this);
         mImageViewNext.setOnClickListener(this);
 
+        mListTimeUnit = new ArrayList<>();
         n = 0;
         initDateBar(0);
         mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
@@ -268,6 +287,40 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mFrameLayout[i].setId(i);
             mLinearLayout.addView(mFrameLayout[i], mParams);
         }
+        mLinearLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        for (int i = 0; i < mListTimeUnit.size(); i++)
+                            if (event.getX() >= mListTimeUnit.get(i).getStart() && event.getX()
+                                    < mListTimeUnit.get(i).getEnd()) {
+                                mPosition = i;
+                                mTextView.setText(getTime(mFrameLayout[mPosition].getId()));
+                            }
+                        mFrameTime.setVisibility(View.VISIBLE);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mFrameTime.setVisibility(View.GONE);
+                        updateStartTime(mFrameLayout[mPosition].getId());
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        if (event.getX() >= 0 && event.getX() <= mWidth) {
+                            for (int i = 0; i < mListTimeUnit.size(); i++)
+                                if (event.getX() >= mListTimeUnit.get(i).getStart() && event.getX()
+                                        < mListTimeUnit.get(i).getEnd()) {
+                                    mPosition = i;
+                                    mTextView.setText(getTime(mFrameLayout[mPosition].getId()));
+                                }
+                            mFrameTime.setVisibility(View.VISIBLE);
+                        }
+                        return true;
+                }
+                return true;
+            }
+        });
+
         updateTimeTracker(TimeUtils.getCalendar(n)[1]);
 
         if (mMode.equals(mStringMode[0])) {
@@ -434,31 +487,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     public void resetTimeTracker() {
         for (int i = 0; i < mFrameLayout.length; i++) {
             mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
-            mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getActionMasked()) {
-                        case MotionEvent.ACTION_DOWN:
-                            mTextView.setText(getTime(v.getId()));
-                            mFrameTime.setVisibility(View.VISIBLE);
-                            mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            mFrameTime.setVisibility(View.GONE);
-                            updateStartTime(v.getId());
-                            return true;
-                        case MotionEvent.ACTION_MOVE:
-                            if (!mRect.contains((int) event.getX(), (int) event.getY())) {
-                                mTextView.setText(getTime(v.getId()));
-                                mFrameTime.setVisibility(View.VISIBLE);
-                                break;
-                            }
-                            return true;
-                    }
-                    return true;
-                }
-            });
         }
     }
 
@@ -583,7 +611,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     mEditTextDateStart.setText(TimeUtils.startTime()[1]);
                     mEditTextTimeDue.setText(TimeUtils.endTime(System.currentTimeMillis())[0]);
                     mEditTextDateDue.setText(TimeUtils.endTime(System.currentTimeMillis())[1]);
-                } else {
+                } else{
                     mEditTextTimeStart.setText(mListTask.get(mListTask.size() - 1).getDuetime());
                     mEditTextDateStart.setText(mListTask.get(mListTask.size() - 1).getDuedate());
                     mEditTextTimeDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond(mListTask
@@ -608,6 +636,9 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mStartDateDefault = mEditTextDateStart.getText().toString();
             mDueTimeDefault = mEditTextTimeDue.getText().toString();
             mDueDateDefault = mEditTextDateDue.getText().toString();
+
+        }
+        else if(mListTask.size() == 1){
 
         }
     }
@@ -869,7 +900,8 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                         } else if (n == -2) {
                             showDialog(this.getResources().getString(R.string.validate_description));
                         } else {
-                            Toast.makeText(this, getResources().getText(R.string.add_task_success), Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, getResources().getText(R.string.add_task_success),
+                                    Toast.LENGTH_LONG).show();
                             onBackPressed();
                         }
                     } else showDialog(this.getResources().getString(R.string.time_equal));
@@ -882,7 +914,8 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 if (TimeUtils.checkFreeTime(startTime, dueTime)) {
                     mTask.setStatus(mSpinnerStatus.getSelectedItem().toString());
                     mDatabase.editTask(mId, mTask);
-                    Toast.makeText(this, getResources().getText(R.string.edit_task), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getResources().getText(R.string.edit_task),
+                            Toast.LENGTH_LONG).show();
                     onBackPressed();
                 } else showDialog(this.getResources().getString(R.string.time_equal));
             } else {

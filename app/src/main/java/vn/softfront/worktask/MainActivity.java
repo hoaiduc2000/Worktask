@@ -75,6 +75,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private CheckBox mCheckBoxClosed;
     private int mId;
     private int n;
+    private int mPosition;
     private int mWidth;
     private Rect mRect;
 
@@ -275,27 +276,50 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
             mFrameLayout[i].setId(i);
             mFrameLayout[i].setClickable(false);
             mLinearLayout.addView(mFrameLayout[i], mParams);
-
         }
         mLinearLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
                 switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        for (int i = 0; i < mListTimeUnit.size(); i++)
+                            if (event.getX() >= mListTimeUnit.get(i).getStart() && event.getX()
+                                    < mListTimeUnit.get(i).getEnd()) {
+                                mPosition = i;
+                                mTextView.setText(getTime(mFrameLayout[mPosition].getId()));
+                            }
+                        mFrameTime.setVisibility(View.VISIBLE);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        mFrameTime.setVisibility(View.GONE);
+                        if (checkConflictTime(getTime(mFrameLayout[mPosition].getId()),
+                                TimeUtils.getCalendar(n)[1]))
+                            createTask(mFrameLayout[mPosition].getId());
+                        return true;
                     case MotionEvent.ACTION_MOVE:
-                        Log.d("child:", v.getId() + "");
+                        if (event.getX() >= 0 && event.getX() <= mWidth) {
+                            for (int i = 0; i < mListTimeUnit.size(); i++)
+                                if (event.getX() >= mListTimeUnit.get(i).getStart() && event.getX()
+                                        < mListTimeUnit.get(i).getEnd()) {
+                                    mPosition = i;
+                                    mTextView.setText(getTime(mFrameLayout[mPosition].getId()));
+                                }
+                            mFrameTime.setVisibility(View.VISIBLE);
+                            Log.d("xRec ", event.getX() + "");
+                        }
                         return true;
                 }
                 return true;
             }
         });
-
-
         updateTimeTracker(TimeUtils.getCalendar(n)[1]);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
+        mListTimeUnit.clear();
         mWidth = mLinearLayout.getWidth();
         float n = (float) mWidth / 144;
         for (int i = 0; i < 144; i++) {
@@ -304,8 +328,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
             mTimeUnit.setEnd((i + 1) * n);
             mListTimeUnit.add(mTimeUnit);
         }
-        Log.d("width ", mListTimeUnit.size() + "");
-
     }
 
     public void createTask(int time) {
@@ -383,32 +405,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void resetTimeTracker() {
         for (int i = 0; i < mFrameLayout.length; i++) {
             mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
-            mFrameLayout[i].setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getActionMasked()) {
-                        case MotionEvent.ACTION_DOWN:
-                            mTextView.setText(getTime(v.getId()));
-                            mFrameTime.setVisibility(View.VISIBLE);
-                            mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            mFrameTime.setVisibility(View.GONE);
-                            if (checkConflictTime(getTime(v.getId()), TimeUtils.getCalendar(n)[1]))
-                                createTask(v.getId());
-                            return true;
-                        case MotionEvent.ACTION_MOVE:
-                            if (!mRect.contains((int) event.getX(), (int) event.getY())) {
-                                mTextView.setText(getTime(v.getId()));
-                                mFrameTime.setVisibility(View.VISIBLE);
-                                break;
-                            }
-                            return true;
-                    }
-                    return true;
-                }
-            });
         }
     }
 
@@ -434,19 +430,19 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         String h = "";
         String m = "";
         int hour = n / (60);
-        int minite = n % 60;
+        int minute = n % 60;
         if (hour < 10)
             h = "0" + hour;
         else if (hour == 0)
             h = "00";
         else
             h = hour + "";
-        if (minite < 10)
-            m = "0" + minite;
-        else if (minite == 0)
+        if (minute < 10)
+            m = "0" + minute;
+        else if (minute == 0)
             m = "00";
         else
-            m = minite + "";
+            m = minute + "";
 
         return h + ":" + m;
     }
