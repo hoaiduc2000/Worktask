@@ -1,10 +1,6 @@
-package model;
+package vn.softfront.worktask.model;
 
-import android.util.Log;
-
-import java.text.SimpleDateFormat;
-
-import util.TimeUtils;
+import vn.softfront.worktask.util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 8/10/2016.
@@ -35,15 +31,6 @@ public class TimeFree {
 
     public void setDueTime(long dueTime) {
         this.dueTime = dueTime;
-
-    }
-
-    public long getDueTime2() {
-        return dueTime2;
-    }
-
-    public void setDueTime2(long dueTime2) {
-        this.dueTime2 = dueTime2;
 
     }
 

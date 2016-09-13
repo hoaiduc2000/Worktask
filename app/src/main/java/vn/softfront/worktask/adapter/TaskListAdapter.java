@@ -1,4 +1,4 @@
-package adapter;
+package vn.softfront.worktask.adapter;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
@@ -13,9 +13,9 @@ import vn.softfront.worktask.R;
 
 import java.util.ArrayList;
 
-import data.Database;
-import model.Task;
-import util.TimeUtils;
+import vn.softfront.worktask.data.Database;
+import vn.softfront.worktask.model.Task;
+import vn.softfront.worktask.util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.

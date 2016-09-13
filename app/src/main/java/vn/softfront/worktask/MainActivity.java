@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -22,14 +23,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import adapter.StatusDialogAdapter;
-import adapter.TaskListAdapter;
-import data.Database;
-import model.Task;
-import util.Constrans;
-import util.TimeUtils;
-import util.DialogUntil;
-import util.Divider;
+import vn.softfront.worktask.adapter.StatusDialogAdapter;
+import vn.softfront.worktask.adapter.TaskListAdapter;
+import vn.softfront.worktask.data.Database;
+import vn.softfront.worktask.model.Task;
+import vn.softfront.worktask.model.TimeUnit;
+import vn.softfront.worktask.util.Constrans;
+import vn.softfront.worktask.util.TimeUtils;
+import vn.softfront.worktask.util.DialogUntil;
+import vn.softfront.worktask.util.Divider;
 
 /**
  * Created by nguyen.hoai.duc on 7/26/2016.
@@ -55,6 +57,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private ArrayList<Task> mTaskArrayList;
     private ArrayList<Task> mTaskArrayListTemp;
     private ArrayList<String> mFilterList;
+    private ArrayList<TimeUnit> mListTimeUnit;
 
     private ImageView mImageViewAdd;
     private ImageView mImageViewPre;
@@ -72,6 +75,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private CheckBox mCheckBoxClosed;
     private int mId;
     private int n;
+    private int mWidth;
     private Rect mRect;
 
     @Override
@@ -210,6 +214,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     }
 
     public void initView() {
+        mListTimeUnit = new ArrayList<>();
         mCheckBoxNew = (CheckBox) findViewById(R.id.checkbox_new);
         mCheckBoxImpogress = (CheckBox) findViewById(R.id.checkbox_improgress);
         mCheckBoxResolved = (CheckBox) findViewById(R.id.checkbox_resolved);
@@ -268,9 +273,39 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         for (int i = 0; i < 144; i++) {
             mFrameLayout[i] = new FrameLayout(this);
             mFrameLayout[i].setId(i);
+            mFrameLayout[i].setClickable(false);
             mLinearLayout.addView(mFrameLayout[i], mParams);
+
         }
+        mLinearLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_MOVE:
+                        Log.d("child:", v.getId() + "");
+                        return true;
+                }
+                return true;
+            }
+        });
+
+
         updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        mWidth = mLinearLayout.getWidth();
+        float n = (float) mWidth / 144;
+        for (int i = 0; i < 144; i++) {
+            TimeUnit mTimeUnit = new TimeUnit();
+            mTimeUnit.setStart(i * n);
+            mTimeUnit.setEnd((i + 1) * n);
+            mListTimeUnit.add(mTimeUnit);
+        }
+        Log.d("width ", mListTimeUnit.size() + "");
+
     }
 
     public void createTask(int time) {
@@ -329,7 +364,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
                         if (i <= m[1])
                             changeColor(i);
                 }
-
             }
         }
         for (int i = 0; i < mTaskArrayListFull.size(); i++)
@@ -361,7 +395,8 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
                             return true;
                         case MotionEvent.ACTION_UP:
                             mFrameTime.setVisibility(View.GONE);
-                            createTask(v.getId());
+                            if (checkConflictTime(getTime(v.getId()), TimeUtils.getCalendar(n)[1]))
+                                createTask(v.getId());
                             return true;
                         case MotionEvent.ACTION_MOVE:
                             if (!mRect.contains((int) event.getX(), (int) event.getY())) {
@@ -383,6 +418,16 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mFrameLayout[n].setOnTouchListener(null);
     }
 
+    public boolean checkConflictTime(String time, String date) {
+        long mTime = TimeUtils.timeToMilisecond(time, date);
+        if (mTime < System.currentTimeMillis()) {
+            DialogUntil.showAlertDialog(this, null, getResources().getString(R.string.time_conflict),
+                    null, this.getResources().getString(R.string.ok), null,
+                    null, null, null, 0, null);
+            return false;
+        } else
+            return true;
+    }
 
     public String getTime(int n) {
         n = n * 10;

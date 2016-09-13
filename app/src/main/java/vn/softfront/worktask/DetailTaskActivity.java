@@ -2,16 +2,13 @@ package vn.softfront.worktask;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.sql.Time;
-
-import data.Database;
-import model.Task;
-import util.TimeUtils;
+import vn.softfront.worktask.data.Database;
+import vn.softfront.worktask.model.Task;
+import vn.softfront.worktask.util.TimeUtils;
 
 /**
  * Created by nguyen.hoai.duc on 8/29/2016.

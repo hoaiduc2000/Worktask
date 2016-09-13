@@ -2,7 +2,7 @@ package vn.softfront.worktask;
 
 import android.app.Application;
 
-import util.DialogUntil;
+import vn.softfront.worktask.util.DialogUntil;
 
 /**
  * Created by nguyen.hoai.duc on 7/29/2016.

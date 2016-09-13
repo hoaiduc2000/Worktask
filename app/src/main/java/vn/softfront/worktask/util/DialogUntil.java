@@ -1,4 +1,4 @@
-package util;
+package vn.softfront.worktask.util;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -15,10 +15,7 @@ import android.widget.TextView;
 
 import vn.softfront.worktask.R;
 
-import java.util.ArrayList;
-
-import adapter.StatusDialogAdapter;
-import model.Task;
+import vn.softfront.worktask.adapter.StatusDialogAdapter;
 
 /**
  * Created by nguyen.hoai.duc on 7/29/2016.

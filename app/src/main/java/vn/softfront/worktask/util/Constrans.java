@@ -1,4 +1,4 @@
-package util;
+package vn.softfront.worktask.util;
 
 /**
  * Created by nguyen.hoai.duc on 8/1/2016.
@@ -14,6 +14,5 @@ public class Constrans {
     public static final int CB_IMPOGRESS = 1;
     public static final int CB_RESOLVED = 2;
     public static final int CB_CLOSED = 3;
-    public static final String END_MINUTE = ":00";
 
 }
