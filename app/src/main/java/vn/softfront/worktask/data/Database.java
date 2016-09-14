@@ -221,7 +221,7 @@ public class Database {
                         KEY_STARTTIME,
                         KEY_STARTDATE,
                         KEY_DUETIME,
-                        KEY_DUEDATE}, KEY_TITLE + " like'%" + title + "%'", null, null,
+                        KEY_DUEDATE}, KEY_TITLE + " REGEXP '" + title + "'", null, null,
                 null, null, null);
         if (mCursor.moveToFirst())
             return true;

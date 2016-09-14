@@ -138,7 +138,7 @@ public class TimeUtils {
         Date mDue = mSimpleDateFormat.parse(dueTime + ":" + "00");
         int start = mStart.getHours() * 60 + mStart.getMinutes();
         int due = mDue.getHours() * 60 + mDue.getMinutes();
-        return new int[]{start / 10 + 1, due / 10 + 1};
+        return new int[]{start / 10 , due / 10 };
     }
 
     public static String getDayOfWeek(int n) {

@@ -77,7 +77,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     private int n;
     private int mPosition;
     private int mWidth;
-    private Rect mRect;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +148,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         Intent mIntent = new Intent(getApplication(), DetailTaskActivity.class);
         mIntent.putExtra(this.getResources().getString(R.string.id), id);
         startActivity(mIntent);
+        overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
 
     @Override
@@ -158,6 +158,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mIntent.putExtra(this.getResources().getString(R.string.mode), mStringMode[2]);
         mIntent.putExtra(this.getResources().getString(R.string.id), id);
         startActivity(mIntent);
+        overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
 
     @Override
@@ -211,7 +212,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public StatusDialogAdapter initDialogAdapter(ArrayList<String> strStatus) {
         mStatusDialogAdapter = new StatusDialogAdapter(this, R.layout.item_dialog_layout, strStatus);
         return mStatusDialogAdapter;
-
     }
 
     public void initView() {
@@ -261,14 +261,16 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
                 Intent mIntent = new Intent(getApplication(), TaskActivity.class);
                 mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[1]);
                 startActivity(mIntent);
+                overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
             }
         });
         initCheckBox();
         n = 0;
         initDateBar(0);
         mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
-        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams
-                .MATCH_PARENT, 1f);
+        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams
+                .MATCH_PARENT, LinearLayout.LayoutParams
+                .MATCH_PARENT, 1.0f);
 
         mFrameLayout = new FrameLayout[144];
         for (int i = 0; i < 144; i++) {
@@ -280,7 +282,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mLinearLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mRect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         for (int i = 0; i < mListTimeUnit.size(); i++)
@@ -306,7 +307,6 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
                                     mTextView.setText(getTime(mFrameLayout[mPosition].getId()));
                                 }
                             mFrameTime.setVisibility(View.VISIBLE);
-                            Log.d("xRec ", event.getX() + "");
                         }
                         return true;
                 }
@@ -336,6 +336,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[3]);
         mIntent.putExtra(getResources().getString(R.string.createtime), mTime);
         startActivity(mIntent);
+        overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
     }
 
     public void initDateBar(int n) {
@@ -343,6 +344,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mTextViewCurrentDay.setText(TimeUtils.getCalendar(n)[0]);
         mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
     }
+
 
     public void updateTimeTracker(String date) {
         mDatabase.open();
@@ -405,13 +407,19 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     public void resetTimeTracker() {
         for (int i = 0; i < mFrameLayout.length; i++) {
             mFrameLayout[i].setBackgroundColor(getResources().getColor(R.color.color_date));
+            mFrameLayout[i].setOnTouchListener(null);
         }
     }
 
     public void changeColor(int n) {
         mFrameLayout[n].setBackgroundColor(getResources()
                 .getColor(R.color.color_bar_tracker));
-        mFrameLayout[n].setOnTouchListener(null);
+        mFrameLayout[n].setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
 
     public boolean checkConflictTime(String time, String date) {
