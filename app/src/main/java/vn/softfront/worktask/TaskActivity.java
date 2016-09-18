@@ -127,6 +127,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.image_view_return:
                 finish();
+                overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
                 break;
             case R.id.text_view_done:
                 saveTask();
@@ -279,8 +280,9 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         n = 0;
         initDateBar(0);
         mLinearLayout = (LinearLayout) findViewById(R.id.layout_time_tracker);
-        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams
-                .MATCH_PARENT, 1f);
+        LinearLayout.LayoutParams mParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams
+                .MATCH_PARENT, LinearLayout.LayoutParams
+                .MATCH_PARENT, 1.0f);
         mFrameLayout = new FrameLayout[144];
         for (int i = 0; i < 144; i++) {
             mFrameLayout[i] = new FrameLayout(this);
@@ -529,6 +531,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mListTimeFree = new ArrayList<>();
         mListTask = mDatabase.getAllTask();
         long dTime = 0;
+
         if (mListTask.size() > 0)
             dTime = TimeUtils.timeToMilisecond(mListTask.get(0)
                     .getStarttime(), mListTask.get(0).getStartdate());
@@ -537,26 +540,8 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 if (mListTask.get(i).getId() == mId)
                     mListTask.remove(i);
         TimeFree mDefaultTimeFree = new TimeFree();
-        if (mListTask.size() == 0) {
-            mEditTextTimeStart.setText(TimeUtils.getCurrentTime());
-            mEditTextDateStart.setText(TimeUtils.getCurrentDate());
-            mEditTextTimeDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond
-                    (TimeUtils.getCurrentTime(), TimeUtils.getCurrentDate()))[0]);
-            mEditTextDateDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond
-                    (TimeUtils.getCurrentTime(), TimeUtils.getCurrentDate()))[1]);
-        } else if (mListTask.size() == 1) {
-            mDefaultTimeFree.setStartTime(TimeUtils.timeToMilisecond(mListTask
-                    .get(mListTask.size() - 1).getDuetime(), mListTask.get(mListTask.size() - 1)
-                    .getDuedate()));
-            mDefaultTimeFree.setDueTime(mDefaultTimeFree.getDefaultDueTime());
-            mListTimeFree.add(mDefaultTimeFree);
-            mEditTextTimeStart.setText(mListTask.get(0).getDuetime());
-            mEditTextDateStart.setText(mListTask.get(0).getDuedate());
-            mEditTextTimeDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond(mListTask.get(0)
-                    .getDuetime(), mListTask.get(0).getDuedate()))[0]);
-            mEditTextDateDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond(mListTask.get(0)
-                    .getDuetime(), mListTask.get(0).getDuedate()))[1]);
-        } else {
+
+        if (mListTask.size() == 1) {
             mDefaultTimeFree.setStartTime(TimeUtils.timeToMilisecond(mListTask
                     .get(mListTask.size() - 1).getDuetime(), mListTask.get(mListTask.size() - 1)
                     .getDuedate()));
@@ -564,8 +549,17 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mListTimeFree.add(mDefaultTimeFree);
 
             if (TimeUtils.checkFreeTime(System.currentTimeMillis(), dTime))
-                mListTimeFree.add(new TimeFree(System.currentTimeMillis(), System.currentTimeMillis()
-                        + TimeUtils.MINUTE * 30, dTime));
+                mListTimeFree.add(new TimeFree(System.currentTimeMillis(), dTime, dTime));
+
+        } else if (mListTask.size() > 1) {
+            mDefaultTimeFree.setStartTime(TimeUtils.timeToMilisecond(mListTask
+                    .get(mListTask.size() - 1).getDuetime(), mListTask.get(mListTask.size() - 1)
+                    .getDuedate()));
+            mDefaultTimeFree.setDueTime(mDefaultTimeFree.getDefaultDueTime());
+            mListTimeFree.add(mDefaultTimeFree);
+
+            if (TimeUtils.checkFreeTime(System.currentTimeMillis(), dTime))
+                mListTimeFree.add(new TimeFree(System.currentTimeMillis(), dTime, dTime));
 
             for (int i = 0; i < mListTask.size(); i++)
                 if (i < mListTask.size() - 1)
@@ -575,14 +569,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                                     .getStartdate()))) {
                         mListTimePosition.add(i);
                     }
-            if (mListTimePosition.size() == 0) {
-                String dueTime = mListTask.get(mListTask.size() - 1).getDuetime();
-                String dueDate = mListTask.get(mListTask.size() - 1).getDuedate();
-                mEditTextTimeStart.setText(dueTime);
-                mEditTextDateStart.setText(dueDate);
-                mEditTextTimeDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond(dueTime, dueDate))[0]);
-                mEditTextDateDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond(dueTime, dueDate))[1]);
-            } else {
+            if (mListTimePosition.size() != 0) {
                 for (int i = 0; i < mListTimePosition.size(); i++) {
                     long startTime = TimeUtils.timeToMilisecond(mListTask.get(mListTimePosition.get(i))
                             .getDuetime(), mListTask.get(mListTimePosition.get(i)).getDuedate());
@@ -604,14 +591,21 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     public void initTime() {
         getTimeFree();
         mTextViewEstimateAdd.setText(Constrans.INIT_ESTIMATE);
-        if (mListTask.size() >= 1) {
+        if (mListTask.size() == 0) {
+            mEditTextTimeStart.setText(TimeUtils.getCurrentTime());
+            mEditTextDateStart.setText(TimeUtils.getCurrentDate());
+            mEditTextTimeDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond
+                    (TimeUtils.getCurrentTime(), TimeUtils.getCurrentDate()))[0]);
+            mEditTextDateDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond
+                    (TimeUtils.getCurrentTime(), TimeUtils.getCurrentDate()))[1]);
+        } else if (mListTask.size() >= 1) {
             if (mListTimeFree.size() == 1) {
                 if (System.currentTimeMillis() > mListTimeFree.get(0).getStartTime()) {
                     mEditTextTimeStart.setText(TimeUtils.startTime()[0]);
                     mEditTextDateStart.setText(TimeUtils.startTime()[1]);
                     mEditTextTimeDue.setText(TimeUtils.endTime(System.currentTimeMillis())[0]);
                     mEditTextDateDue.setText(TimeUtils.endTime(System.currentTimeMillis())[1]);
-                } else{
+                } else {
                     mEditTextTimeStart.setText(mListTask.get(mListTask.size() - 1).getDuetime());
                     mEditTextDateStart.setText(mListTask.get(mListTask.size() - 1).getDuedate());
                     mEditTextTimeDue.setText(TimeUtils.endTime(TimeUtils.timeToMilisecond(mListTask
@@ -636,9 +630,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mStartDateDefault = mEditTextDateStart.getText().toString();
             mDueTimeDefault = mEditTextTimeDue.getText().toString();
             mDueDateDefault = mEditTextDateDue.getText().toString();
-
-        }
-        else if(mListTask.size() == 1){
 
         }
     }
@@ -791,10 +782,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                             .getStartTime() < dueTime)
                         count++;
                 } else {
-                    if (mListTimeFree.get(i).getStartTime() <= startTime && mListTimeFree.get(i)
-                            .getStartTime() < dueTime && mListTimeFree.get(i).getDueTime() > startTime
-                            && mListTimeFree.get(i).getDueTime() >= dueTime)
-                        count++;
+                    if (mListTimeFree.get(i).getStartTime() <= startTime && mListTimeFree.get(i).getStartTime() < dueTime)
+                        if (mListTimeFree.get(i).getDueTime() > startTime)
+                            if (mListTimeFree.get(i).getDueTime() >= dueTime)
+                                count++;
 
                 }
             }
@@ -903,6 +894,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                             Toast.makeText(this, getResources().getText(R.string.add_task_success),
                                     Toast.LENGTH_LONG).show();
                             onBackPressed();
+                            overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
                         }
                     } else showDialog(this.getResources().getString(R.string.time_equal));
 
@@ -917,6 +909,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(this, getResources().getText(R.string.edit_task),
                             Toast.LENGTH_LONG).show();
                     onBackPressed();
+                    overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
                 } else showDialog(this.getResources().getString(R.string.time_equal));
             } else {
                 showDialog(this.getResources().getString(R.string.duplicated_time) + "\n \n" +
@@ -935,5 +928,9 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 null, null, null, 0, null);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
+    }
 }
