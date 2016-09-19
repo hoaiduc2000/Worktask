@@ -91,6 +91,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
 
     private String mTimeTemp;
     private String mDateTemp;
+    private String mStartTime;
+    private String mStartDate;
+    private String mDueTime;
+    private String mDueDate;
 
     private int mId;
     private int n;
@@ -127,7 +131,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 break;
             case R.id.image_view_return:
                 finish();
-                overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
+                overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
                 break;
             case R.id.text_view_done:
                 saveTask();
@@ -136,11 +140,13 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 n = n - 1;
                 initDateBar(n);
                 updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+                trackTimeChance();
                 break;
             case R.id.image_view_next:
                 n = n + 1;
                 initDateBar(n);
                 updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+                trackTimeChance();
                 break;
         }
     }
@@ -197,6 +203,10 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mEditTextTimeDue.setText(mTask.getDuetime());
         mEditTextDateDue.setText(mTask.getDuedate());
         mTextViewEstimateAdd.setText(mTask.getEstimate());
+        mStartTime = mTask.getStarttime();
+        mStartDate = mTask.getStartdate();
+        mDueTime = mTask.getDuetime();
+        mDueDate = mTask.getDuedate();
         setWarning(mTask);
         mDatabase.close();
     }
@@ -305,6 +315,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                         return true;
                     case MotionEvent.ACTION_UP:
                         mFrameTime.setVisibility(View.GONE);
+                        updateTimeTracker(TimeUtils.getCalendar(n)[1]);
                         updateStartTime(mFrameLayout[mPosition].getId());
                         return true;
                     case MotionEvent.ACTION_MOVE:
@@ -330,7 +341,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mTextViewWarning.setVisibility(View.GONE);
             initDataEdit();
             setPreviewMode();
-
         } else if (mMode.equals(mStringMode[1])) {
             onTitleTextChance();
             initTime();
@@ -352,8 +362,8 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mTextViewWarning.setVisibility(View.VISIBLE);
             mTextViewHeader.setText(mStringHeader[1]);
         }
+        trackTimeChance();
     }
-
 
     public void initData() {
         mDatabase = new Database(this);
@@ -369,7 +379,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
             mId = mBundle.getInt(this.getResources().getString(R.string.id));
         else if (mMode.equals(mStringMode[3]))
             mTime = mBundle.getStringArray(getResources().getString(R.string.createtime));
-
     }
 
     public void initTrackerTime() {
@@ -380,7 +389,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mEditTextTimeDue.setText(dueTime[0]);
         mEditTextDateDue.setText(dueTime[1]);
         mTextViewEstimateAdd.setText(Constrans.INIT_ESTIMATE);
-
     }
 
     public void initDateBar(int n) {
@@ -389,9 +397,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mTextViewNextDay.setText(TimeUtils.getCalendar(n + 1)[0]);
     }
 
-
     public void updateStartTime(int id) {
-
         long dueTime = TimeUtils.timeToMilisecond(mEditTextTimeDue.getText().toString()
                 , mEditTextDateDue.getText().toString());
         long newStartTime = TimeUtils.timeToMilisecond(getTime(id)
@@ -405,7 +411,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 mEditTextTimeDue.setText(due[0]);
                 mEditTextDateDue.setText(due[1]);
             }
-
             mEditTextTimeStart.setText(getTime(id));
             mEditTextDateStart.setText(TimeUtils.getCalendar(n)[1]);
 
@@ -413,7 +418,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     , mEditTextDateDue.getText().toString());
             mTextViewEstimateAdd.setText(TimeUtils.getEstimateTime(newStartTime, dueTime2));
         }
-
+        trackTimeChance();
     }
 
     public void updateTimeTracker(String date) {
@@ -433,40 +438,36 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     public void initTimeTracker(ArrayList<Task> mTaskArrayList, ArrayList<Task> mTaskArrayListFull) {
         boolean flag = false;
         for (int j = 0; j < mTaskArrayList.size(); j++) {
-            String start = mTaskArrayList.get(j).getStarttime();
-            String due = mTaskArrayList.get(j).getDuetime();
-            String startDate = mTaskArrayList.get(j).getStartdate();
-            String dueDate = mTaskArrayList.get(j).getDuedate();
-            long subDay = TimeUtils.dateToMilisecond(dueDate)
-                    - TimeUtils.dateToMilisecond(startDate);
-            int m[] = null;
-            if (mTaskArrayList.get(j).getId() == mId)
-                flag = true;
-            else
-                flag = false;
-            try {
-                m = TimeUtils.position(start, due);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if (startDate.equals(dueDate)) {
-                for (int i = 0; i < mFrameLayout.length; i++)
-                    if (i >= m[0] && i <= m[1])
-                        changeColor(i, flag);
-            } else if (subDay >= TimeUtils.DAY) {
-                if (startDate.equals(TimeUtils.getCalendar(n)[1])) {
-                    for (int i = 0; i < mFrameLayout.length; i++)
-                        if (i >= m[0])
-                            changeColor(i, flag);
-                } else if (dueDate.equals(TimeUtils.getCalendar(n)[1])) {
-                    for (int i = 0; i < mFrameLayout.length; i++)
-                        if (i <= m[1])
-                            changeColor(i, flag);
+            if (mTaskArrayList.get(j).getId() != mId) {
+                String start = mTaskArrayList.get(j).getStarttime();
+                String due = mTaskArrayList.get(j).getDuetime();
+                String startDate = mTaskArrayList.get(j).getStartdate();
+                String dueDate = mTaskArrayList.get(j).getDuedate();
+                long subDay = TimeUtils.dateToMilisecond(dueDate)
+                        - TimeUtils.dateToMilisecond(startDate);
+                int m[] = null;
+                try {
+                    m = TimeUtils.position(start, due);
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
-
+                if (startDate.equals(dueDate)) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i >= m[0] && i <= m[1])
+                            changeColor(i);
+                } else if (subDay >= TimeUtils.DAY) {
+                    if (startDate.equals(TimeUtils.getCalendar(n)[1])) {
+                        for (int i = 0; i < mFrameLayout.length; i++)
+                            if (i >= m[0])
+                                changeColor(i);
+                    } else if (dueDate.equals(TimeUtils.getCalendar(n)[1])) {
+                        for (int i = 0; i < mFrameLayout.length; i++)
+                            if (i <= m[1])
+                                changeColor(i);
+                    }
+                }
             }
         }
-
         for (int i = 0; i < mTaskArrayListFull.size(); i++)
             if (!mTaskArrayListFull.get(i).getStatus().equals(mStringStatus[0]) && !mTaskArrayListFull
                     .get(i).getStatus().equals(mStringStatus[1]))
@@ -476,12 +477,9 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     > TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getStartdate())
                     && TimeUtils.dateToMilisecond(TimeUtils.getCalendar(n)[1])
                     < TimeUtils.dateToMilisecond(mTaskArrayListFull.get(i).getDuedate())) {
-                if (mTaskArrayListFull.get(i).getId() == mId)
-                    flag = true;
-                else
-                    flag = false;
+                if (mTaskArrayListFull.get(i).getId() != mId)
                 for (int j = 0; j < mFrameLayout.length; j++)
-                    changeColor(j, flag);
+                    changeColor(j);
             }
         }
     }
@@ -492,16 +490,49 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    public void changeColor(int n, boolean flag) {
-        if (!flag)
-            mFrameLayout[n].setBackgroundColor(getResources()
-                    .getColor(R.color.color_bar_tracker));
-        else
-            mFrameLayout[n].setBackgroundColor(getResources()
-                    .getColor(R.color.color_bar_edit));
+    public void changeColor(int n) {
+        mFrameLayout[n].setBackgroundColor(getResources()
+                .getColor(R.color.color_bar_tracker));
         mFrameLayout[n].setOnTouchListener(null);
     }
 
+    public void changeColorEdit(int n) {
+        mFrameLayout[n].setBackgroundColor(getResources()
+                .getColor(R.color.color_bar_edit));
+        mFrameLayout[n].setOnTouchListener(null);
+    }
+
+    public void trackTimeChance() {
+        mStartTime = mEditTextTimeStart.getText().toString();
+        mStartDate = mEditTextDateStart.getText().toString();
+        mDueTime = mEditTextTimeDue.getText().toString();
+        mDueDate = mEditTextDateDue.getText().toString();
+        long subDay = TimeUtils.dateToMilisecond(mDueDate)
+                - TimeUtils.dateToMilisecond(mStartDate);
+        int m[] = null;
+        try {
+            m = TimeUtils.position(mStartTime, mDueTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (TimeUtils.getCalendar(n)[1].equals(mStartDate)||TimeUtils.getCalendar(n)[1].equals(mDueDate))
+            if (mStartDate.equals(mDueDate)) {
+                for (int i = 0; i < mFrameLayout.length; i++)
+                    if (i >= m[0] && i <= m[1])
+                        changeColorEdit(i);
+            } else if (subDay >= TimeUtils.DAY) {
+                if (mStartDate.equals(TimeUtils.getCalendar(n)[1])) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i >= m[0])
+                            changeColorEdit(i);
+                } else if (mDueDate.equals(TimeUtils.getCalendar(n)[1])) {
+                    for (int i = 0; i < mFrameLayout.length; i++)
+                        if (i <= m[1])
+                            changeColorEdit(i);
+                }
+            }
+
+    }
 
     public String getTime(int n) {
         n = n * 10;
@@ -650,24 +681,30 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mTimePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String hour = selectedHour + "";
-                String minute = selectedMinute + "";
-                if (selectedHour < Constrans.MINUTE)
-                    hour = "0" + hour;
-                if (selectedMinute < Constrans.MINUTE)
-                    minute = "0" + minute;
-                mTimeTemp = hour + ":" + minute;
-                if (mode == 0) {
-                    if (checkAvailableStartTime(mTimeTemp, mEditTextDateStart.getText().toString()))
-                        mEditText.setText(mTimeTemp);
-                    else showDialog(getResources().getString(R.string.time_conflict));
-                } else {
-                    if (checkAvailableDueTime(mTimeTemp, mEditTextDateDue.getText().toString()))
-                        mEditText.setText(mTimeTemp);
-                    else showDialog(getResources().getString(R.string.time_conflict));
+                if (timePicker.isShown()) {
+                    String hour = selectedHour + "";
+                    String minute = selectedMinute + "";
+                    if (selectedHour < Constrans.MINUTE)
+                        hour = "0" + hour;
+                    if (selectedMinute < Constrans.MINUTE)
+                        minute = "0" + minute;
+                    mTimeTemp = hour + ":" + minute;
+                    if (mode == 0) {
+                        if (checkAvailableStartTime(mTimeTemp, mEditTextDateStart.getText().toString())) {
+                            mEditText.setText(mTimeTemp);
+                            mStartTime = mTimeTemp;
+                        } else showDialog(getResources().getString(R.string.time_conflict));
+                    } else {
+                        if (checkAvailableDueTime(mTimeTemp, mEditTextDateDue.getText().toString())) {
+                            mEditText.setText(mTimeTemp);
+                            mDueTime = mTimeTemp;
+                        } else showDialog(getResources().getString(R.string.time_conflict));
+                    }
+                    setEstimateTime();
+                    setWarning(null);
+                    updateTimeTracker(TimeUtils.getCalendar(n)[1]);
+                    trackTimeChance();
                 }
-                setEstimateTime();
-                setWarning(null);
             }
         }, hour, minute, true);
         mTimePicker.show();
@@ -689,25 +726,29 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         mDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                String day = dayOfMonth + "";
-                String month = monthOfYear + 1 + "";
-                if (dayOfMonth < Constrans.MINUTE)
-                    day = "0" + day;
-                if (monthOfYear + 1 < Constrans.MINUTE)
-                    month = "0" + month;
-                mDateTemp = day + "/" + month + "/" + year;
-                if (mode == 0) {
-                    if (checkAvailableStartTime(mEditTextTimeStart.getText().toString(), mDateTemp))
-                        mEditText.setText(mDateTemp);
-                    else
-                        showDialog(getResources().getString(R.string.date_conflict));
-                } else {
-                    if (checkAvailableDueTime(mEditTextTimeDue.getText().toString(), mDateTemp))
-                        mEditText.setText(mDateTemp);
-                    else showDialog(getResources().getString(R.string.date_conflict));
+                if (view.isShown()) {
+                    String day = dayOfMonth + "";
+                    String month = monthOfYear + 1 + "";
+                    if (dayOfMonth < Constrans.MINUTE)
+                        day = "0" + day;
+                    if (monthOfYear + 1 < Constrans.MINUTE)
+                        month = "0" + month;
+                    mDateTemp = day + "/" + month + "/" + year;
+                    if (mode == 0) {
+                        if (checkAvailableStartTime(mEditTextTimeStart.getText().toString(), mDateTemp)) {
+                            mEditText.setText(mDateTemp);
+                            mStartDate = mDateTemp;
+                        } else
+                            showDialog(getResources().getString(R.string.date_conflict));
+                    } else {
+                        if (checkAvailableDueTime(mEditTextTimeDue.getText().toString(), mDateTemp)) {
+                            mEditText.setText(mDateTemp);
+                            mDueDate = mDateTemp;
+                        } else showDialog(getResources().getString(R.string.date_conflict));
+                    }
+                    setEstimateTime();
+                    setWarning(null);
                 }
-                setEstimateTime();
-                setWarning(null);
             }
         }, year, month, day);
         mDatePicker.show();
@@ -786,7 +827,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                         if (mListTimeFree.get(i).getDueTime() > startTime)
                             if (mListTimeFree.get(i).getDueTime() >= dueTime)
                                 count++;
-
                 }
             }
         if (count == 1)
@@ -894,7 +934,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                             Toast.makeText(this, getResources().getText(R.string.add_task_success),
                                     Toast.LENGTH_LONG).show();
                             onBackPressed();
-                            overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
+                            overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
                         }
                     } else showDialog(this.getResources().getString(R.string.time_equal));
 
@@ -909,7 +949,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                     Toast.makeText(this, getResources().getText(R.string.edit_task),
                             Toast.LENGTH_LONG).show();
                     onBackPressed();
-                    overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
+                    overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
                 } else showDialog(this.getResources().getString(R.string.time_equal));
             } else {
                 showDialog(this.getResources().getString(R.string.duplicated_time) + "\n \n" +
@@ -931,6 +971,6 @@ public class TaskActivity extends Activity implements View.OnClickListener {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.push_right_in,R.anim.push_right_out);
+        overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
     }
 }

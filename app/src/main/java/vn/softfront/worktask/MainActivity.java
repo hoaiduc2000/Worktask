@@ -522,5 +522,4 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         checkCB(mCheckBoxImpogress.isChecked(), Constrans.CB_IMPOGRESS);
     }
 
-
 }
