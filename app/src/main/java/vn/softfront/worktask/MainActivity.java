@@ -81,6 +81,8 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        if (savedInstanceState != null)
+//            onReceiverIntent(savedInstanceState);
         setContentView(vn.softfront.worktask.R.layout.activity_main);
         initData();
         initView();
@@ -148,7 +150,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         Intent mIntent = new Intent(getApplication(), DetailTaskActivity.class);
         mIntent.putExtra(this.getResources().getString(R.string.id), id);
         startActivity(mIntent);
-        overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
@@ -158,7 +160,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mIntent.putExtra(this.getResources().getString(R.string.mode), mStringMode[2]);
         mIntent.putExtra(this.getResources().getString(R.string.id), id);
         startActivity(mIntent);
-        overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     @Override
@@ -207,6 +209,14 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         checkCB(mCheckBoxResolved.isChecked(), Constrans.CB_RESOLVED);
         checkCB(mCheckBoxClosed.isChecked(), Constrans.CB_CLOSED);
         mDialog.dismiss();
+    }
+
+    public void onReceiverIntent(Bundle mBundle) {
+        int id = mBundle.getInt("id");
+        Intent mIntent = new Intent(getApplication(), DetailTaskActivity.class);
+        mIntent.putExtra(this.getResources().getString(R.string.id), id);
+        startActivity(mIntent);
+
     }
 
     public StatusDialogAdapter initDialogAdapter(ArrayList<String> strStatus) {
@@ -261,7 +271,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
                 Intent mIntent = new Intent(getApplication(), TaskActivity.class);
                 mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[1]);
                 startActivity(mIntent);
-                overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
+                overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
             }
         });
         initCheckBox();
@@ -336,7 +346,7 @@ public class MainActivity extends Activity implements CompoundButton.OnCheckedCh
         mIntent.putExtra(getResources().getString(R.string.mode), mStringMode[3]);
         mIntent.putExtra(getResources().getString(R.string.createtime), mTime);
         startActivity(mIntent);
-        overridePendingTransition(R.anim.push_left_in,R.anim.push_left_out);
+        overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
     }
 
     public void initDateBar(int n) {

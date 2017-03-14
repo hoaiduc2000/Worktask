@@ -19,6 +19,9 @@
         </activity>
         <activity android:name=".DetailTaskActivity">
         </activity>
+        <receiver android:name="service.MyBroadCast"
+            android:enabled="true">
+        </receiver>
     </application>
 
 </manifest>

@@ -1,8 +1,11 @@
 package vn.softfront.worktask;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.Editable;
@@ -25,6 +28,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import service.MyBroadCast;
 import vn.softfront.worktask.data.Database;
 import vn.softfront.worktask.model.Task;
 import vn.softfront.worktask.model.TimeFree;
@@ -931,6 +935,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                         } else if (n == -2) {
                             showDialog(this.getResources().getString(R.string.validate_description));
                         } else {
+                            setNotifycation(mTask,startTime, (int)n);
                             Toast.makeText(this, getResources().getText(R.string.add_task_success),
                                     Toast.LENGTH_LONG).show();
                             onBackPressed();
@@ -946,6 +951,7 @@ public class TaskActivity extends Activity implements View.OnClickListener {
                 if (TimeUtils.checkFreeTime(startTime, dueTime)) {
                     mTask.setStatus(mSpinnerStatus.getSelectedItem().toString());
                     mDatabase.editTask(mId, mTask);
+                    setNotifycation(mTask,startTime, mId);
                     Toast.makeText(this, getResources().getText(R.string.edit_task),
                             Toast.LENGTH_LONG).show();
                     onBackPressed();
@@ -959,6 +965,17 @@ public class TaskActivity extends Activity implements View.OnClickListener {
         } catch (StringIndexOutOfBoundsException e) {
             showDialog(this.getResources().getString(R.string.empty_title_validate));
         }
+
+    }
+
+    public void setNotifycation(Task mTask,long time, int id){
+        Intent intent = new Intent(this, MyBroadCast.class);
+        intent.putExtra("id", id);
+        intent.putExtra("title", mTask.getTitle());
+        intent.putExtra("content", mTask.getDescription());
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.getApplicationContext(), id, intent, PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager alarmManager = (AlarmManager) this.getSystemService(ALARM_SERVICE);
+        alarmManager.set(AlarmManager.RTC, time, pendingIntent);
 
     }
 
